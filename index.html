@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FinWise — финансовая грамотность в игре</title>
+<meta name="description" content="FinWise: мини-игры, квесты и цели, чтобы дети и подростки Казахстана учились обращаться с деньгами.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2316a34a'/%3E%3Ctext x='32' y='44' font-size='34' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3E%E2%82%B8%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#f6f7f2; --card:#ffffff; --ink:#18221b; --muted:#5d6b62; --line:#e2e6df;
+  --brand:#16a34a; --brand-ink:#ffffff; --brand-soft:#dcf5e4;
+  --accent:#f59e0b; --accent-soft:#fdf0d5; --danger:#dc2626; --danger-soft:#fde4e4;
+  --info:#2563eb; --info-soft:#e0eaff;
+  --radius:16px; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#101511; --card:#18201a; --ink:#e8efe9; --muted:#9db0a3; --line:#2a352d;
+    --brand:#22c55e; --brand-ink:#06210f; --brand-soft:#173823;
+    --accent:#fbbf24; --accent-soft:#3a2f12; --danger:#f87171; --danger-soft:#3b1a1a;
+    --info:#60a5fa; --info-soft:#172a48;
+    --shadow:0 1px 2px rgba(0,0,0,.3);
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--info)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+header.top{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 0}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;text-decoration:none;color:var(--ink)}
+.logo span.mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--brand);color:var(--brand-ink);font-size:20px}
+.pills{margin-left:auto;display:flex;gap:8px;font-size:14px}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;padding:0 0 8px;scrollbar-width:none}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{flex:0 0 auto;border:0;background:transparent;padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--muted);font-weight:600}
+nav.tabs button[aria-current="page"]{background:var(--brand-soft);color:var(--ink)}
+main{padding:20px 0 60px}
+h1{font-size:clamp(26px,5vw,40px);line-height:1.15;margin:0 0 10px}
+h2{font-size:22px;margin:0 0 12px}
+h3{font-size:17px;margin:0 0 6px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.stack>*+*{margin-top:14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--card);padding:10px 16px;border-radius:12px;cursor:pointer;font-weight:600;min-height:44px}
+.btn:hover{border-color:var(--brand)}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:var(--brand-ink)}
+.btn.primary:hover{filter:brightness(1.05)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.sm{padding:6px 10px;min-height:36px;font-size:14px}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--ink)}
+.tag.green{background:var(--brand-soft)}
+.tag.blue{background:var(--info-soft)}
+.note{border-left:4px solid var(--accent);background:var(--accent-soft);padding:10px 12px;border-radius:8px;font-size:14px}
+.note.info{border-color:var(--info);background:var(--info-soft)}
+.note.bad{border-color:var(--danger);background:var(--danger-soft)}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:4px}
+input[type=text],input[type=number],input[type=search],select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);min-height:44px}
+textarea{min-height:80px;resize:vertical}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid var(--brand-soft);outline-offset:1px;border-color:var(--brand)}
+.err{color:var(--danger);font-size:14px;min-height:20px;margin-top:4px}
+.hero{display:grid;gap:20px;grid-template-columns:1.3fr 1fr;align-items:center}
+@media (max-width:760px){.hero{grid-template-columns:1fr}}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.lvl{border:2px solid var(--line);background:var(--card);border-radius:14px;padding:12px 6px;text-align:center;cursor:pointer}
+.lvl b{display:block}
+.lvl .e{font-size:26px}
+.lvl[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft)}
+.steps{counter-reset:s;display:grid;gap:10px}
+.steps div{counter-increment:s;display:flex;gap:10px;align-items:flex-start}
+.steps div::before{content:counter(s);flex:0 0 28px;height:28px;border-radius:50%;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center;font-weight:700;font-size:14px}
+.stat{text-align:center}
+.stat b{display:block;font-size:26px}
+.game{display:flex;flex-direction:column;gap:8px}
+.game .e{font-size:34px}
+.stars{color:var(--accent);letter-spacing:2px}
+.progress{height:10px;background:var(--line);border-radius:999px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--brand);border-radius:999px;transition:width .3s}
+.opts{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.opt{text-align:left;border:2px solid var(--line);background:var(--card);border-radius:12px;padding:12px;cursor:pointer;min-height:48px}
+.opt.ok{border-color:var(--brand);background:var(--brand-soft)}
+.opt.no{border-color:var(--danger);background:var(--danger-soft)}
+.qtext{font-size:19px;font-weight:600}
+.list{list-style:none;padding:0;margin:0}
+.list li{padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center}
+.list li:last-child{border-bottom:0}
+.list .grow{flex:1;min-width:0}
+.quest.done{opacity:.7}
+.quest.done .qt{text-decoration:line-through}
+.chest{font-size:56px;line-height:1}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.me td{background:var(--brand-soft);font-weight:700}
+.tbl-scroll{overflow-x:auto}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:14px}
+.empty{text-align:center;padding:24px 10px;color:var(--muted)}
+.empty .e{font-size:36px;display:block}
+.faq h3{margin-bottom:4px}
+.up{color:var(--brand);font-weight:700}
+.down{color:var(--danger);font-weight:700}
+.qty{display:flex;gap:4px;align-items:center}
+.qty input{width:70px;text-align:center;min-height:36px;padding:4px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:50;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;width:calc(100% - 32px);max-width:420px}
+#toast div{background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:12px;font-weight:600;box-shadow:var(--shadow);text-align:center}
+footer{border-top:1px solid var(--line);padding:20px 0 40px;font-size:14px;color:var(--muted)}
+.hide{display:none!important}
+.big-emoji{font-size:48px}
+.kv{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.kv:last-child{border-bottom:0}
+.budget-row{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;padding:6px 0}
+@media (max-width:420px){.budget-row{grid-template-columns:1fr 110px}}
+.sr{position:absolute;left:-9999px}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="bar">
+      <a class="logo" href="#home" data-go="home"><span class="mark">₸</span>FinWise</a>
+      <div class="pills" aria-label="Твой прогресс">
+        <span class="pill" title="Опыт">⭐ <b id="hdrXp">0</b></span>
+        <span class="pill" title="Монеты (игровые, не настоящие деньги)">🪙 <b id="hdrCoins">0</b></span>
+        <span class="pill" title="Серия дней подряд">🔥 <b id="hdrStreak">0</b></span>
+      </div>
+    </div>
+    <nav class="tabs" aria-label="Разделы">
+      <button data-go="home">🏠 Главная</button>
+      <button data-go="games">🗺️ Игры</button>
+      <button data-go="quests">🎯 Квесты и лига</button>
+      <button data-go="goals">🐷 Копилка</button>
+      <button data-go="helper">💬 Помощник</button>
+      <button data-go="market">📈 Биржа</button>
+      <button data-go="parents">👨‍👩‍👧 Родителям</button>
+      <button data-go="about">ℹ️ О проекте</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="storageWarn" class="note bad hide" style="margin-top:12px">Сохранение в браузере недоступно (например, приватный режим). Всё работает, но прогресс пропадёт, когда закроешь вкладку.</div>
+</div>
+
+<main class="wrap" id="main">
+
+<!-- ================= ГЛАВНАЯ ================= -->
+<section id="home" data-view>
+  <div class="hero">
+    <div>
+      <span class="tag green">Для 10–20 лет · Казахстан · в тенге</span>
+      <h1 style="margin-top:10px">Учись обращаться с деньгами — играя</h1>
+      <p class="muted">Короткие мини-игры про бюджет, накопления, кредиты и мошенников. После каждой — урок на минуту. Выполняй квесты, открывай сундук и ставь цели в копилке.</p>
+      <div class="row" style="margin-top:14px">
+        <button class="btn primary" id="btnStart">▶ Начать играть</button>
+        <button class="btn" data-go="quests">🎯 Квесты на сегодня</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>1. Выбери свой уровень</h3>
+      <p class="small muted">От уровня зависят вопросы и суммы в играх. Поменять можно в любой момент.</p>
+      <div class="levels" id="levelPicker"></div>
+      <div style="margin-top:14px">
+        <label for="nameInput">2. Как тебя зовут? <span class="muted">(необязательно)</span></label>
+        <div class="row" style="flex-wrap:nowrap">
+          <input type="text" id="nameInput" maxlength="20" placeholder="Например, Айдана">
+          <button class="btn" id="btnName">OK</button>
+        </div>
+        <div class="err" id="nameErr"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:20px" id="homeStats"></div>
+
+  <div class="grid g2" style="margin-top:20px">
+    <div class="card">
+      <h2>Как это работает</h2>
+      <div class="steps">
+        <div><span>Выбираешь уровень: школьник, подросток или студент.</span></div>
+        <div><span>Проходишь мини-игру и читаешь короткий урок.</span></div>
+        <div><span>Получаешь ⭐ опыт и 🪙 монеты, выполняешь квесты дня.</span></div>
+        <div><span>Ставишь цель в копилке и видишь, когда накопишь.</span></div>
+        <div><span>Если что-то непонятно — ищешь ответ в «Помощнике».</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Совет дня</h2>
+      <p id="tipText" class="qtext" style="font-weight:500"></p>
+      <button class="btn sm" id="btnTip">Другой совет</button>
+      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+      <h3>Продолжить</h3>
+      <div id="continueBox"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ИГРЫ ================= -->
+<section id="games" data-view class="hide">
+  <div id="gameListView">
+    <div class="row" style="justify-content:space-between;align-items:flex-end;margin-bottom:12px">
+      <div>
+        <h2 style="margin:0">Карта игр</h2>
+        <p class="muted small" style="margin:0">Уровень: <b id="gamesLevel"></b>. За 80%+ — 2 звезды, за 100% — 3 звезды.</p>
+      </div>
+      <button class="btn sm" data-go="home">Сменить уровень</button>
+    </div>
+    <div class="progress" style="margin-bottom:16px"><i id="mapProgress" style="width:0"></i></div>
+    <div class="grid g3" id="gameGrid"></div>
+  </div>
+  <div id="gamePlayView" class="hide"></div>
+</section>
+
+<!-- ================= КВЕСТЫ ================= -->
+<section id="quests" data-view class="hide">
+  <div class="grid g2">
+    <div class="card">
+      <h2>🎯 Квесты на сегодня</h2>
+      <p class="small muted">Новые квесты каждый день. Выполни все три — откроется сундук.</p>
+      <ul class="list" id="questList"></ul>
+      <div style="text-align:center;margin-top:14px">
+        <div class="chest" id="chestIcon">🧰</div>
+        <p id="chestText" class="small muted"></p>
+        <button class="btn primary" id="btnChest" disabled>Открыть сундук</button>
+      </div>
+    </div>
+    <div class="card">
+      <h2>🏆 Лига недели</h2>
+      <p class="note info">Это демо-лига: остальные участники <b>вымышленные</b>, их очки придуманы. Настоящая лига с друзьями есть в мобильном приложении.</p>
+      <div class="tbl-scroll" style="margin-top:10px"><table id="leagueTable"></table></div>
+      <p class="small muted" style="margin-top:8px">Считается опыт, набранный с понедельника. В понедельник лига начинается заново.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h2>🏅 Достижения</h2>
+    <div class="grid g3" id="achGrid"></div>
+  </div>
+</section>
+
+<!-- ================= КОПИЛКА ================= -->
+<section id="goals" data-view class="hide">
+  <div class="grid g2">
+    <div class="card">
+      <h2>🐷 Новая цель</h2>
+      <p class="small muted">Запиши, на что копишь. Мы посчитаем, сколько недель понадобится.</p>
+      <form id="goalForm" novalidate class="stack">
+        <div><label for="gName">На что копишь?</label><input type="text" id="gName" maxlength="40" placeholder="Наушники, велосипед, подарок маме…"></div>
+        <div class="grid g2" style="gap:10px">
+          <div><label for="gTarget">Сколько стоит, ₸</label><input type="number" id="gTarget" min="1" inputmode="numeric" placeholder="25000"></div>
+          <div><label for="gWeekly">Откладываю в неделю, ₸</label><input type="number" id="gWeekly" min="1" inputmode="numeric" placeholder="2000"></div>
+        </div>
+        <div class="err" id="goalErr"></div>
+        <button class="btn primary" type="submit">Добавить цель</button>
+      </form>
+    </div>
+    <div class="card">
+      <h2>📈 Калькулятор: как растут накопления</h2>
+      <p class="small muted">Посмотри, как работает сложный процент. Ставка условная — это учебный расчёт, а не предложение банка.</p>
+      <div class="grid g2" style="gap:10px">
+        <div><label for="cStart">Есть сейчас, ₸</label><input type="number" id="cStart" min="0" value="10000"></div>
+        <div><label for="cMonthly">Добавляю в месяц, ₸</label><input type="number" id="cMonthly" min="0" value="3000"></div>
+        <div><label for="cRate">Ставка, % годовых</label><input type="number" id="cRate" min="0" max="50" step="0.5" value="12"></div>
+        <div><label for="cYears">Лет</label><input type="number" id="cYears" min="1" max="40" value="5"></div>
+      </div>
+      <div class="err" id="calcErr"></div>
+      <button class="btn" id="btnCalc">Посчитать</button>
+      <div id="calcOut" style="margin-top:12px"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="row" style="justify-content:space-between"><h2 style="margin:0">Мои цели</h2><span class="small muted">Хранятся только в этом браузере</span></div>
+    <div id="goalList" style="margin-top:8px"></div>
+  </div>
+</section>
+
+<!-- ================= ПОМОЩНИК ================= -->
+<section id="helper" data-view class="hide">
+  <div class="card">
+    <h2>💬 Помощник по деньгам</h2>
+    <p class="note info">Это <b>не ИИ</b>, а поиск по готовым ответам, которые мы написали заранее. AI-ментор работает только в мобильном приложении FinWise, на этом сайте он не подключён.</p>
+    <form id="helpForm" class="row" style="margin-top:12px;flex-wrap:nowrap" role="search">
+      <label for="helpQ" class="sr">Вопрос</label>
+      <input type="search" id="helpQ" placeholder="Например: что такое кредит?" maxlength="80">
+      <button class="btn primary" type="submit">Найти</button>
+    </form>
+    <div class="err" id="helpErr"></div>
+    <p class="small muted" style="margin:4px 0 6px">Популярное:</p>
+    <div class="chips" id="helpChips"></div>
+  </div>
+  <div id="helpResults" class="stack" style="margin-top:14px"></div>
+</section>
+
+<!-- ================= БИРЖА ================= -->
+<section id="market" data-view class="hide">
+  <div class="card">
+    <h2>📈 Биржа-тренажёр</h2>
+    <p class="note">Все компании, новости и цены <b>вымышленные</b>, деньги ненастоящие. Это не реальные котировки и не совет, во что вкладываться. Онлайн-турнир с друзьями есть только в мобильном приложении — здесь можно сыграть одному.</p>
+    <div id="marketBox" style="margin-top:14px"></div>
+  </div>
+</section>
+
+<!-- ================= РОДИТЕЛЯМ ================= -->
+<section id="parents" data-view class="hide">
+  <div class="card">
+    <h2>👨‍👩‍👧 Для родителей</h2>
+    <p class="muted">Здесь виден прогресс ребёнка <b>на этом устройстве и в этом браузере</b>. Никакие данные никуда не отправляются: у сайта нет сервера и аккаунтов.</p>
+  </div>
+  <div class="grid g3" style="margin-top:14px" id="parentStats"></div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>Результаты по темам</h3>
+      <div id="parentTopics"></div>
+    </div>
+    <div class="card">
+      <h3>Последние действия</h3>
+      <div id="parentLog"></div>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:14px">
+    <div class="card">
+      <h3>О чём поговорить дома</h3>
+      <div id="parentTips"></div>
+    </div>
+    <div class="card">
+      <h3>Отчёт</h3>
+      <p class="small muted">Скопируйте короткий отчёт, чтобы отправить его себе или учителю.</p>
+      <textarea id="reportText" readonly style="min-height:150px"></textarea>
+      <div class="row" style="margin-top:8px"><button class="btn" id="btnCopyReport">📋 Скопировать отчёт</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= О ПРОЕКТЕ ================= -->
+<section id="about" data-view class="hide">
+  <div class="grid g2">
+    <div class="card stack">
+      <h2>О проекте FinWise</h2>
+      <div><h3>Для кого и зачем</h3><p>Для школьников и студентов Казахстана примерно от 10 до 20 лет. В школе почти не учат обращаться с деньгами, а лекции скучные. В FinWise можно в игре научиться копить, планировать бюджет, разбираться в процентах и распознавать мошенников. Все примеры местные и в тенге.</p></div>
+      <div><h3>Как пользоваться</h3><p>Выбираю уровень → прохожу мини-игру → читаю урок → выполняю квесты дня → ставлю цель в копилке → если непонятно, ищу ответ в помощнике.</p></div>
+      <div><h3>Главное в первой версии</h3><p>Мини-игры с уроками, прогресс и мотивация (опыт, звёзды, квесты, сундук, лига), подсказки по деньгам простым языком.</p></div>
+      <div><h3>Эта страница и приложение</h3><p class="small">Это веб-демонстрация. В мобильном приложении FinWise есть то, чего здесь нет: AI-ментор, три языка (казахский, русский, английский), онлайн-лига и «Биржа-турнир» с друзьями. Здесь всё работает без сервера и интернета после загрузки.</p></div>
+      <div><h3>Что дальше</h3>
+        <ul class="small" style="margin:0;padding-left:20px">
+          <li>✅ Новая тема «Первая работа и налоги» — уже есть в демо</li>
+          <li>✅ Раздел для родителей — первая версия здесь</li>
+          <li>⏳ Тестирование на школьниках — собираем отзывы формой справа</li>
+          <li>⏳ Больше игр: кредиты, страховка, первая банковская карта</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card">
+      <h2>📝 Отзыв тестера</h2>
+      <p class="small muted">Дай поиграть другу или однокласснику и запиши его мнение. Отзывы сохраняются только в этом браузере — потом их можно скопировать.</p>
+      <form id="fbForm" novalidate class="stack">
+        <div class="grid g2" style="gap:10px">
+          <div><label for="fbAge">Возраст</label><input type="number" id="fbAge" min="6" max="99" placeholder="13"></div>
+          <div><label for="fbRate">Оценка</label>
+            <select id="fbRate"><option value="">Выбери…</option><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></div>
+        </div>
+        <div><label for="fbLike">Что понравилось?</label><textarea id="fbLike" maxlength="300"></textarea></div>
+        <div><label for="fbFix">Что непонятно или что исправить?</label><textarea id="fbFix" maxlength="300"></textarea></div>
+        <div class="err" id="fbErr"></div>
+        <button class="btn primary" type="submit">Сохранить отзыв</button>
+      </form>
+      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+      <div class="row" style="justify-content:space-between"><h3 style="margin:0">Собранные отзывы <span id="fbCount" class="tag blue">0</span></h3><button class="btn sm" id="btnCopyFb">📋 Скопировать все</button></div>
+      <div id="fbList" style="margin-top:8px"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <h3>Данные и настройки</h3>
+    <p class="small muted">Прогресс, цели и отзывы хранятся только в этом браузере на этом устройстве. На телефоне или другом компьютере их не будет. Если очистить данные браузера, они удалятся.</p>
+    <button class="btn danger" id="btnReset">Сбросить весь прогресс</button>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>FinWise</b> — учебный проект. Суммы, компании, ставки и участники лиги в играх — <b>вымышленные или упрощённые</b>, это не финансовый совет. Налоговые правила могут меняться — уточняйте у взрослых или на официальных сайтах.</p>
+    <p>Прогресс сохраняется только в этом браузере.</p>
+  </div>
+</footer>
+
+<div id="toast" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- Хранилище ---------------- */
+var KEY = 'finwise-web-v1';
+var storageOK = (function(){ try{ var k='__fw_t'; localStorage.setItem(k,'1'); localStorage.removeItem(k); return true; }catch(e){ return false; } })();
+function defaultState(){
+  return { level:'school', name:'', xp:0, coins:0, games:{}, daily:{date:'',plays:0,correct:0,perfect:0,searches:0,goals:0,market:0,chest:false},
+           streak:{last:'',count:0}, week:{key:'',xp:0}, goals:[], feedback:[], log:[], ach:{}, chests:0, marketBest:null };
+}
+function load(){
+  var s = defaultState();
+  if(!storageOK) return s;
+  try{
+    var raw = localStorage.getItem(KEY);
+    if(raw){ var d = JSON.parse(raw); if(d && typeof d==='object'){ for(var k in s){ if(d[k]!==undefined) s[k]=d[k]; } } }
+  }catch(e){}
+  if(!Array.isArray(s.goals)) s.goals=[]; if(!Array.isArray(s.feedback)) s.feedback=[]; if(!Array.isArray(s.log)) s.log=[];
+  if(!s.games||typeof s.games!=='object') s.games={};
+  if(['school','teen','student'].indexOf(s.level)<0) s.level='school';
+  return s;
+}
+function save(){ if(!storageOK) return; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+var S = load();
+
+/* ---------------- Утилиты ---------------- */
+function $(id){ return document.getElementById(id); }
+function esc(t){ return String(t==null?'':t).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function fmt(n){ return Math.round(n).toLocaleString('ru-RU').replace(/,/g,' ') + ' ₸'; }
+function num(v){ var n = parseFloat(String(v).replace(',','.')); return isFinite(n)?n:NaN; }
+function pad(n){ return (n<10?'0':'')+n; }
+function dayKey(d){ d=d||new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function weekKey(){ var d=new Date(); var day=(d.getDay()+6)%7; d.setDate(d.getDate()-day); return dayKey(d); }
+function hash(str){ var h=2166136261; for(var i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+function rng(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; var t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function shuffle(a,r){ r=r||Math.random; a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(r()*(i+1)); var t=a[i]; a[i]=a[j]; a[j]=t; } return a; }
+function toast(msg){ var t=$('toast'); var d=document.createElement('div'); d.textContent=msg; t.appendChild(d); setTimeout(function(){ d.remove(); }, 2800); }
+function plural(n,a,b,c){ n=Math.abs(n)%100; var n1=n%10; if(n>10&&n<20) return c; if(n1>1&&n1<5) return b; if(n1===1) return a; return c; }
+
+/* ---------------- Дневные данные ---------------- */
+function ensureDay(){
+  var today=dayKey();
+  if(S.daily.date!==today){ S.daily={date:today,plays:0,correct:0,perfect:0,searches:0,goals:0,market:0,chest:false}; }
+  var wk=weekKey(); if(S.week.key!==wk){ S.week={key:wk,xp:0}; }
+}
+function touchStreak(){
+  var today=dayKey(); if(S.streak.last===today) return;
+  var y=new Date(); y.setDate(y.getDate()-1);
+  S.streak.count = (S.streak.last===dayKey(y)) ? S.streak.count+1 : 1;
+  S.streak.last = today;
+}
+function addReward(xp,coins){ ensureDay(); S.xp+=xp; S.coins+=coins; S.week.xp+=xp; }
+function addLog(text){ S.log.unshift({t:Date.now(),text:text}); if(S.log.length>30) S.log.length=30; }
+
+/* ---------------- Уровни ---------------- */
+var LEVELS = {
+  school:{name:'Школьник',e:'🎒',age:'10–13 лет'},
+  teen:{name:'Подросток',e:'🎮',age:'14–16 лет'},
+  student:{name:'Студент',e:'🎓',age:'17–20 лет'}
+};
+function playerLevel(){ return Math.floor(Math.sqrt(S.xp/40))+1; }
+
+/* ---------------- Контент игр ----------------
+   Вопросы для «Правда или миф» и «Развод или нет» взяты из прошлой версии FinWise. */
+var TF = ['Правда','Миф'];
+var SC = ['Развод','Безопасно'];
+var NW = ['Нужно','Хочу'];
+function tf(text,isTrue,ex){ return {q:text,o:TF,a:isTrue?0:1,ex:ex}; }
+function sc(text,isScam,ex){ return {q:text,o:SC,a:isScam?0:1,ex:ex}; }
+function nw(text,need,ex){ return {q:text,o:NW,a:need?0:1,ex:ex}; }
+function mc(text,opts,a,ex){ return {q:text,o:opts,a:a,ex:ex}; }
+
+var GAMES = [
+ { id:'needwant', e:'🛒', name:'Нужно или хочу', topic:'Траты',
+   desc:'Отличи важные покупки от желаний.',
+   lesson:'«Нужно» — без этого сложно жить или учиться. «Хочу» — приятно, но можно подождать. Хотеть — нормально! Просто сначала закрой «нужно», а на «хочу» копи отдельно. Попробуй правило 24 часов: захотел — подожди день и реши снова.',
+   q:{
+    school:[ nw('Новый рюкзак, потому что старый порвался',true,'Без рюкзака неудобно учиться — это нужная покупка.'),
+             nw('Скин для персонажа в игре',false,'Красиво, но играть можно и без него. Это «хочу».'),
+             nw('Проездной на автобус до школы',true,'Нужно, чтобы добираться до школы.'),
+             nw('Третья пара кроссовок, хотя две целые',false,'Две пары уже есть — это желание.'),
+             nw('Тетради и ручки к новой четверти',true,'Нужно для учёбы.'),
+             nw('Газировка каждый день после уроков',false,'Это привычка-«хочу», и за месяц выходит заметная сумма.') ],
+    teen:[ nw('Зарядка для телефона, потому что старая сломалась',true,'Телефон нужен для связи и учёбы — значит, нужно.'),
+           nw('Новый телефон, хотя старый работает хорошо',false,'Старый работает — это «хочу». Можно копить на него как на цель.'),
+           nw('Подписка на третий музыкальный сервис',false,'Хватит одной. Подписки незаметно «съедают» деньги.'),
+           nw('Зимняя куртка, из которой ты вырос',true,'Тёплая одежда по размеру — нужная вещь.'),
+           nw('Билет на концерт любимой группы',false,'Отличная цель, но это «хочу»: копи на неё заранее.'),
+           nw('Учебник для подготовки к экзамену',true,'Вложение в учёбу — нужная трата.') ],
+    student:[ nw('Оплата общежития или аренды',true,'Обязательный расход: платится первым.'),
+              nw('Доставка еды каждый вечер',false,'Удобно, но готовить самому в 2–3 раза дешевле.'),
+              nw('Проезд до университета',true,'Нужно, чтобы учиться.'),
+              nw('Новые наушники за 120 000 ₸, когда старые работают',false,'Это «хочу». Можно поставить цель в копилке.'),
+              nw('Лекарства по назначению врача',true,'Здоровье — всегда «нужно».'),
+              nw('Кофе навынос каждый день',false,'Мелочь, но за месяц выходит 20–30 тысяч тенге.') ]
+   }},
+ { id:'myths', e:'🧠', name:'Правда или миф', topic:'Мышление',
+   desc:'Проверь, каким денежным мифам ты веришь.',
+   lesson:'Про деньги много мифов: «скидка — всегда экономия», «кредит — бесплатные деньги», «богатые просто родились богатыми». Если звучит слишком просто — проверь. Посчитай сам или спроси взрослого, которому доверяешь.',
+   q:{
+    school:[ tf('Деньги растут на деревьях, если правильно посадить',false,'Конечно нет 😄 Деньги нужно зарабатывать или копить.'),
+             tf('Если откладывать по 100 ₸ в день — за год накопится больше 35 000 ₸',true,'Да! 100 × 365 = 36 500 ₸. Маленькие суммы складываются в большие.'),
+             tf('Скидка 50% всегда значит, что ты экономишь деньги',false,'Только если ты и так собирался это покупать. Иначе ты не копишь, а тратишь.'),
+             tf('Лучше сначала отложить в копилку, потом тратить',true,'Это правило «плати сначала себе». Иначе всегда «не остаётся».'),
+             tf('Если друзья просят денег — нужно всегда давать',false,'Дружбу не покупают деньгами. Давай только то, что готов потерять.') ],
+    teen:[ tf('Кредитная карта — это бесплатные деньги от банка',false,'Это деньги в долг с процентами. Не вернёшь вовремя — заплатишь сильно больше.'),
+           tf('Чем дороже бренд, тем выше качество',false,'Часто платишь за рекламу и имидж, а не за качество.'),
+           tf('Сложный процент работает и за тебя (в копилке), и против тебя (в кредитах)',true,'Точно. Поэтому копи рано и избегай дорогих кредитов.'),
+           tf('Деньги в банке безопаснее, чем дома под подушкой',true,'Вклады в банках Казахстана застрахованы государством в пределах лимита. Дома — пожар, кража или просто потерял.'),
+           tf('Все богатые получили деньги от родителей',false,'Многие сами заработали — через бизнес, навыки или умные инвестиции.'),
+           tf('Если работать больше часов — обязательно больше зарабатываешь',false,'Доход зависит и от ценности, которую создаёшь, не только от часов.') ],
+    student:[ tf('Диверсификация (разные инвестиции) полностью убирает риск',false,'Снижает, но не убирает. Рынок может упасть весь сразу.'),
+              tf('Подушка безопасности — это 3–6 месячных расходов',true,'Стандартный совет: чтобы пережить потерю работы или болезнь.'),
+              tf('Высокая зарплата автоматически означает богатство',false,'Богатство = доход минус расходы. Можно много зарабатывать и быть в долгах.'),
+              tf('Наличные под подушкой со временем дешевеют из-за инфляции',true,'Цены растут, а сумма — нет. Поэтому покупательная способность падает.'),
+              tf('Финансовый план нужен только богатым',false,'Наоборот: без плана сложнее выйти из круга «зарплата → траты → 0».'),
+              tf('Если не понимаешь, во что инвестируешь — лучше не инвестируй',true,'Классическое правило. Иначе потеряешь деньги на том, что не понял.') ]
+   }},
+ { id:'safety', e:'🛡️', name:'Развод или нет?', topic:'Безопасность',
+   desc:'Узнай схемы мошенников раньше, чем они узнают тебя.',
+   lesson:'Главные признаки мошенников: торопят («срочно!»), просят код из SMS, пароль или фото карты, обещают слишком много («вложи 1000 — получишь 10 000»). Никому не говори коды и пароли. Сомневаешься — остановись и спроси взрослого.',
+   q:{
+    school:[ sc('В игре пишут: «Отправь 500 ₸ на этот номер — и получишь 5000 ₸ алмазов бесплатно!»',true,'Развод. Никто не возвращает в 10 раз больше. Это приманка.'),
+             sc('Друг из класса зовёт после уроков поиграть в футбол во дворе',false,'Безопасно. Никто не просит денег или данные.'),
+             sc('Незнакомец в чате просит фото твоей банковской карты, «чтобы перевести приз»',true,'Развод. Номер карты и коды — секрет. Настоящий приз так не дают.'),
+             sc('Мама перевела тебе деньги на обед через приложение банка',false,'Безопасно. Знакомый человек и официальное приложение.'),
+             sc('Всплыло окно: «Поздравляем! Ты выиграл телефон. Введи данные родителей»',true,'Развод. Случайные «выигрыши» в интернете — почти всегда обман.') ],
+    teen:[ sc('SMS «от банка»: «Карта заблокирована. Срочно введите код из SMS по ссылке»',true,'Развод (фишинг). Банк никогда не просит код из SMS.'),
+           sc('Объявление: «Заработок 50 000 ₸ в день из дома, просто вложи 10 000 ₸ для старта»',true,'Развод. Просят вложить вперёд — уходи.'),
+           sc('Официальное приложение банка предлагает включить вход по отпечатку пальца',false,'Безопасно. Это твоя защита.'),
+           sc('Пишут: «Дам +1000 подписчиков, просто скинь логин и пароль»',true,'Развод. Так угоняют аккаунты. Пароль — никому.'),
+           sc('Новый профиль без отзывов на барахолке требует 100% предоплату',true,'Частая схема. Лучше оплата при встрече.'),
+           sc('Друг прислал «смотри видео с тобой 😂», но пишет странно, не как обычно',true,'Аккаунт друга могли взломать. Не переходи — спроси его лично.') ],
+    student:[ sc('«Инвест-гуру» в Telegram гарантирует 30% в месяц без риска',true,'Гарантированная высокая доходность без риска — признак пирамиды.'),
+              sc('Звонок: «Служба безопасности банка. Переведите деньги на безопасный счёт»',true,'Банк и полиция никогда не просят перевести деньги «для защиты».'),
+              sc('Предлагают 20 000 ₸ за то, чтобы «одолжить» свою карту для переводов',true,'Это схема «дропов». Владелец карты может стать соучастником преступления.'),
+              sc('У тебя включена двухфакторная аутентификация и менеджер паролей',false,'Безопасно. Это сильно повышает защиту.'),
+              sc('Письмо «от налоговой»: возврат 80 000 ₸ — введите данные карты по ссылке',true,'Госорганы не возвращают деньги через ссылку с вводом карты.'),
+              sc('Банк прислал push в своём приложении: «Вход с нового устройства» — и это был ты',false,'Безопасно. Обычное уведомление о твоём же входе.') ]
+   }},
+ { id:'compound', e:'📈', name:'Сложный процент', topic:'Накопления',
+   desc:'Как деньги растут сами — и как растут долги.',
+   lesson:'Сложный процент — это «проценты на проценты». Чем раньше начнёшь копить, тем сильнее он работает. Но с кредитами то же самое, только против тебя. Правило 72: раздели 72 на ставку — получишь, примерно за сколько лет сумма удвоится.',
+   q:{
+    school:[ mc('Ты положил 1 000 ₸, и каждый год сумма растёт на 10%. Сколько будет через год?',['1 010 ₸','1 100 ₸','2 000 ₸'],1,'10% от 1 000 — это 100. 1 000 + 100 = 1 100 ₸.'),
+             mc('Что лучше для копилки?',['Начать копить раньше','Начать копить позже','Без разницы'],0,'Чем раньше, тем дольше деньги растут.'),
+             mc('Друг даёт 1 000 ₸ в долг, но вернуть надо 1 500 ₸. Сколько ты переплатишь?',['500 ₸','150 ₸','0 ₸'],0,'1 500 − 1 000 = 500 ₸. Долг всегда стоит денег.'),
+             mc('Если каждую неделю откладывать 500 ₸, сколько будет через 10 недель (без процентов)?',['5 000 ₸','500 ₸','50 000 ₸'],0,'500 × 10 = 5 000 ₸.') ],
+    teen:[ mc('Положил 10 000 ₸ под 10% годовых с капитализацией. Сколько будет через 2 года?',['12 000 ₸','12 100 ₸','20 000 ₸'],1,'Первый год: 11 000. Второй: 11 000 + 1 100 = 12 100 ₸. Проценты начисляются и на проценты.'),
+           mc('Что такое капитализация?',['Проценты добавляются к вкладу и тоже приносят доход','Банк забирает часть денег','Деньги нельзя снять'],0,'Именно поэтому рост ускоряется.'),
+           mc('Правило 72: при 12% годовых сумма удвоится примерно за…',['3 года','6 лет','12 лет'],1,'72 ÷ 12 = 6 лет.'),
+           mc('Взял в долг 100 000 ₸ под 30% годовых и год ничего не платил. Сколько должен?',['103 000 ₸','130 000 ₸','100 000 ₸'],1,'100 000 + 30% = 130 000 ₸. Долги растут так же, как вклады.') ],
+    student:[ mc('Что выгоднее за 30 лет при одной ставке: 10 лет копить с 20 лет и остановиться, или копить 20 лет с 30?',['Чаще всего — начать в 20','Всегда — начать в 30','Одинаково'],0,'Ранние деньги дольше растут. При хорошей ставке ранний старт часто выигрывает, даже если вложено меньше.'),
+              mc('Ставка вклада 14%, инфляция 9%. Насколько примерно растут деньги «по-настоящему»?',['На 14%','Примерно на 5%','На 23%'],1,'Реальный рост ≈ ставка − инфляция.'),
+              mc('Кредитка: долг 200 000 ₸, ставка 40% годовых, платишь только минимум. Что будет?',['Долг быстро исчезнет','Долг будет гаситься очень долго, переплата большая','Банк простит проценты'],1,'Минимальный платёж в основном покрывает проценты.'),
+              mc('Правило 72: при 8% годовых деньги удвоятся примерно за…',['9 лет','4 года','16 лет'],0,'72 ÷ 8 = 9 лет.') ]
+   }},
+ { id:'job', e:'💼', name:'Первая работа и налоги', topic:'Работа', isNew:true,
+   desc:'Новая тема: зарплата «до» и «на руки», договор, ловушки.',
+   lesson:'Зарплата «до удержаний» и «на руки» — разные суммы. В Казахстане с зарплаты работника удерживают пенсионные взносы (ОПВ) и подоходный налог (ИПН). В игре мы считаем упрощённо, без вычетов и других взносов. Точные правила меняются — проверяй их на официальных сайтах или у взрослых. Работа по договору защищает тебя, а работодатель, который просит заплатить ему, — тревожный знак.',
+   q:{
+    school:[ mc('Что получает человек за работу?',['Зарплату','Скидку','Ничего'],0,'За работу платят зарплату.'),
+             mc('Ты помог соседу и получил 2 000 ₸. Как лучше поступить?',['Часть отложить, часть потратить','Сразу всё потратить','Отдать незнакомцу в интернете'],0,'Отложенная часть — шаг к цели.'),
+             mc('«Работа»: заплати 3 000 ₸ — и будешь получать по 10 000 ₸ в день. Это…',['Похоже на обман','Отличная идея','Обычная работа'],0,'На настоящей работе платят тебе, а не ты.'),
+             mc('Зачем взрослые платят налоги?',['На школы, больницы, дороги','Чтобы банк стал богаче','Это штраф за работу'],0,'Налоги идут на общие нужды страны.') ],
+    teen:[ mc('Зарплата «до удержаний» — это…',['Сумма до вычета взносов и налогов','То, что приходит на карту','Премия'],0,'«На руки» — меньше, после удержаний.'),
+           mc('Какие удержания с зарплаты работника в Казахстане главные?',['Пенсионные взносы (ОПВ) и подоходный налог (ИПН)','Только плата за интернет','Никаких'],0,'Есть и другие взносы, но ОПВ и ИПН — основные.'),
+           mc('Зачем нужен трудовой договор?',['Он защищает твои права: зарплату, часы, отдых','Он нужен только начальнику','Чтобы платить больше налогов'],0,'Без договора сложнее доказать, что тебе должны.'),
+           mc('Работодатель просит 15 000 ₸ «за форму и обучение» до первой смены. Что делать?',['Насторожиться и посоветоваться со взрослыми','Срочно заплатить','Отдать паспорт'],0,'Частая схема обмана при поиске работы.') ],
+    student:[ mc('Упрощённо: зарплата 200 000 ₸, ОПВ 10%, затем ИПН 10% с остатка (без вычетов). Сколько на руки?',['180 000 ₸','162 000 ₸','160 000 ₸'],1,'200 000 − 20 000 (ОПВ) = 180 000; ИПН 10% = 18 000; на руки 162 000 ₸. Реальный расчёт учитывает вычеты и другие взносы.'),
+              mc('Куда идут пенсионные взносы (ОПВ)?',['На твой личный пенсионный счёт','Работодателю','Пропадают'],0,'Это твои будущие пенсионные накопления.'),
+              mc('Первая зарплата 180 000 ₸. Хороший первый шаг —',['Сразу отложить часть, например 10–20%','Взять кредит на телефон','Потратить всё за выходные'],0,'«Плати сначала себе».'),
+              mc('Зачем самозанятому или фрилансеру разбираться в налогах?',['Чтобы платить их сам и правильно','Налоги платят только компании','Незачем'],0,'Если работаешь на себя, налог за тебя никто не заплатит.') ]
+   }},
+ { id:'budget', e:'💰', name:'Собери бюджет', topic:'Бюджет', custom:true,
+   desc:'Распредели деньги так, чтобы хватило на всё важное.',
+   lesson:'Бюджет — это план, куда пойдут деньги до того, как они кончатся. Популярное правило 50/30/20: примерно 50% на нужное, 30% на желания, 20% в накопления. Для школьника цифры другие, но идея та же: сначала обязательное, потом накопления, потом развлечения.'}
+];
+
+var BUDGET = {
+  school:{title:'Карманные деньги на неделю',income:5000,items:[
+    {k:'food',n:'Перекусы в школе',min:1500,need:true},{k:'transport',n:'Проезд',min:1000,need:true},
+    {k:'fun',n:'Развлечения и игры',min:0},{k:'save',n:'Копилка',min:0,save:true}]},
+  teen:{title:'Деньги на месяц (карманные + подработка)',income:30000,items:[
+    {k:'food',n:'Еда вне дома',min:8000,need:true},{k:'transport',n:'Проезд',min:4000,need:true},
+    {k:'phone',n:'Связь и интернет',min:3000,need:true},{k:'fun',n:'Развлечения',min:0},{k:'save',n:'Накопления',min:0,save:true}]},
+  student:{title:'Месячный бюджет студента (стипендия + подработка)',income:200000,items:[
+    {k:'rent',n:'Жильё (общежитие/аренда)',min:70000,need:true},{k:'food',n:'Продукты',min:45000,need:true},
+    {k:'transport',n:'Проезд',min:10000,need:true},{k:'phone',n:'Связь',min:5000,need:true},
+    {k:'fun',n:'Развлечения',min:0},{k:'save',n:'Подушка/накопления',min:0,save:true}]}
+};
+
+/* ---------------- Навигация ---------------- */
+var VIEWS=['home','games','quests','goals','helper','market','parents','about'];
+function go(view, push){
+  if(VIEWS.indexOf(view)<0) view='home';
+  VIEWS.forEach(function(v){ $(v).classList.toggle('hide', v!==view); });
+  document.querySelectorAll('nav.tabs button').forEach(function(b){ if(b.dataset.go===view) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current'); });
+  if(push!==false && location.hash!=='#'+view){ try{ history.replaceState(null,'','#'+view); }catch(e){ location.hash=view; } }
+  render(view);
+  window.scrollTo(0,0);
+}
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-go]'); if(!t) return;
+  e.preventDefault(); if(t.dataset.go==='games') closeGame(); go(t.dataset.go);
+});
+window.addEventListener('hashchange',function(){ go(location.hash.slice(1),false); });
+
+function render(view){
+  ensureDay(); renderHeader();
+  if(view==='home') renderHome();
+  if(view==='games') renderGames();
+  if(view==='quests') renderQuests();
+  if(view==='goals') renderGoals();
+  if(view==='helper') renderHelper();
+  if(view==='market') renderMarket();
+  if(view==='parents') renderParents();
+  if(view==='about') renderFeedback();
+}
+function renderHeader(){ $('hdrXp').textContent=S.xp; $('hdrCoins').textContent=S.coins; $('hdrStreak').textContent=S.streak.count; }
+
+/* ---------------- Главная ---------------- */
+var TIPS=['Плати сначала себе: отложи часть денег сразу, как они появились.','Хочешь что-то купить? Подожди 24 часа. Если желание осталось — подумай ещё раз.','Код из SMS — как ключ от квартиры. Его не просит ни банк, ни полиция.','Записывай траты хотя бы неделю — увидишь, куда «утекают» деньги.','Скидка — не экономия, если ты не собирался это покупать.','100 ₸ в день — это 36 500 ₸ в год.','Подушка безопасности — запас на 3–6 месяцев расходов.','Не вкладывай в то, чего не понимаешь.'];
+var tipIdx = hash(dayKey())%TIPS.length;
+function renderHome(){
+  var lp=$('levelPicker'); lp.innerHTML='';
+  Object.keys(LEVELS).forEach(function(k){
+    var L=LEVELS[k]; var b=document.createElement('button'); b.className='lvl'; b.setAttribute('aria-pressed', S.level===k?'true':'false');
+    b.innerHTML='<span class="e">'+L.e+'</span><b>'+L.name+'</b><span class="small muted">'+L.age+'</span>';
+    b.onclick=function(){ S.level=k; save(); renderHome(); toast('Уровень: '+L.name); };
+    lp.appendChild(b);
+  });
+  if(document.activeElement!==$('nameInput')) $('nameInput').value=S.name||'';
+  var played=GAMES.filter(function(g){ return bestOf(g.id)>0; }).length;
+  $('homeStats').innerHTML=
+    '<div class="card stat"><span class="muted small">'+(S.name?'Привет, '+esc(S.name)+'!':'Твой уровень игрока')+'</span><b>Ур. '+playerLevel()+'</b><span class="small muted">⭐ '+S.xp+' опыта</span></div>'+
+    '<div class="card stat"><span class="muted small">Игр пройдено</span><b>'+played+' / '+GAMES.length+'</b><span class="small muted">на уровне «'+LEVELS[S.level].name+'»</span></div>'+
+    '<div class="card stat"><span class="muted small">Квесты сегодня</span><b>'+questsDone()+' / 3</b><span class="small muted">'+(S.daily.chest?'сундук открыт 🎉':'выполни все — откроешь сундук')+'</span></div>';
+  $('tipText').textContent='💡 '+TIPS[tipIdx];
+  var next=GAMES.filter(function(g){ return bestOf(g.id)<80; })[0];
+  $('continueBox').innerHTML = next ?
+    '<div class="row"><span class="big-emoji" style="font-size:32px">'+next.e+'</span><div class="grow"><b>'+next.name+'</b><div class="small muted">'+next.desc+'</div></div><button class="btn sm primary" data-play="'+next.id+'">Играть</button></div>' :
+    '<p class="small">Все игры уровня пройдены на 80%+. Попробуй уровень посложнее или <a href="#market" data-go="market">Биржу</a>!</p>';
+}
+$('btnTip').onclick=function(){ tipIdx=(tipIdx+1)%TIPS.length; $('tipText').textContent='💡 '+TIPS[tipIdx]; };
+$('btnStart').onclick=function(){ go('games'); };
+$('btnName').onclick=saveName;
+$('nameInput').addEventListener('keydown',function(e){ if(e.key==='Enter') saveName(); });
+function saveName(){
+  var v=$('nameInput').value.trim();
+  if(!v){ $('nameErr').textContent='Имя пустое — ничего страшного, можно играть и без него.'; S.name=''; save(); renderHome(); return; }
+  $('nameErr').textContent=''; S.name=v.slice(0,20); save(); renderHome(); toast('Приятно познакомиться, '+S.name+'!');
+}
+
+/* ---------------- Игры ---------------- */
+function gkey(id){ return id+':'+S.level; }
+function bestOf(id){ var g=S.games[gkey(id)]; return g?g.best:0; }
+function starsFor(p){ return p>=100?3:p>=80?2:p>=50?1:0; }
+function starStr(n){ return '★★★'.slice(0,n)+'☆☆☆'.slice(0,3-n); }
+function renderGames(){
+  if(!$('gamePlayView').classList.contains('hide')) return;
+  $('gamesLevel').textContent=LEVELS[S.level].e+' '+LEVELS[S.level].name;
+  var total=0; var grid=$('gameGrid'); grid.innerHTML='';
+  GAMES.forEach(function(g){
+    var b=bestOf(g.id); total+=starsFor(b);
+    var d=document.createElement('div'); d.className='card game';
+    d.innerHTML='<div class="row" style="justify-content:space-between"><span class="e">'+g.e+'</span>'+(g.isNew?'<span class="tag">Новое</span>':'<span class="tag green">'+g.topic+'</span>')+'</div>'+
+      '<h3>'+g.name+'</h3><p class="small muted" style="flex:1">'+g.desc+'</p>'+
+      '<div class="row" style="justify-content:space-between"><span class="stars" aria-label="Звёзд: '+starsFor(b)+' из 3">'+starStr(starsFor(b))+'</span><span class="small muted">'+(b?('лучший: '+b+'%'):'ещё не играл')+'</span></div>'+
+      '<button class="btn primary" data-play="'+g.id+'">'+(b?'Сыграть ещё':'Играть')+'</button>';
+    grid.appendChild(d);
+  });
+  $('mapProgress').style.width=Math.round(total/(GAMES.length*3)*100)+'%';
+}
+document.addEventListener('click',function(e){ var t=e.target.closest('[data-play]'); if(!t) return; startGame(t.dataset.play); });
+
+var G=null; // текущая игра
+function closeGame(){ G=null; $('gamePlayView').classList.add('hide'); $('gamePlayView').innerHTML=''; $('gameListView').classList.remove('hide'); }
+function startGame(id){
+  var g=GAMES.filter(function(x){return x.id===id;})[0]; if(!g) return;
+  if($('games').classList.contains('hide')) go('games');
+  $('gameListView').classList.add('hide'); var v=$('gamePlayView'); v.classList.remove('hide');
+  if(g.custom){ startBudget(g); return; }
+  var qs=shuffle(g.q[S.level]||g.q.school).map(function(q){
+    if(q.o.length<3) return q; // «Правда/Миф», «Развод/Безопасно» — порядок кнопок постоянный
+    var idx=shuffle(q.o.map(function(_,i){return i;}));
+    return {q:q.q,ex:q.ex,o:idx.map(function(i){return q.o[i];}),a:idx.indexOf(q.a)};
+  });
+  G={g:g,qs:qs,i:0,correct:0,answered:false};
+  showQ();
+}
+function gameHead(g,extra){
+  return '<div class="row" style="justify-content:space-between;margin-bottom:12px"><button class="btn sm ghost" id="btnBack">← К списку игр</button><span class="small muted">'+g.e+' '+g.name+' · '+LEVELS[S.level].name+'</span></div>'+(extra||'');
+}
+function bindBack(){ var b=$('btnBack'); if(b) b.onclick=function(){ closeGame(); renderGames(); }; }
+function showQ(){
+  var q=G.qs[G.i], v=$('gamePlayView');
+  v.innerHTML=gameHead(G.g)+
+    '<div class="card stack"><div class="row" style="justify-content:space-between"><span class="small muted">Вопрос '+(G.i+1)+' из '+G.qs.length+'</span><span class="small">✅ '+G.correct+'</span></div>'+
+    '<div class="progress"><i style="width:'+(G.i/G.qs.length*100)+'%"></i></div>'+
+    '<p class="qtext">'+esc(q.q)+'</p><div class="opts" id="opts"></div><div id="fb" aria-live="polite"></div></div>';
+  bindBack();
+  var box=$('opts');
+  q.o.forEach(function(o,idx){ var b=document.createElement('button'); b.className='opt'; b.textContent=o; b.onclick=function(){ answer(idx); }; box.appendChild(b); });
+}
+function answer(idx){
+  if(G.answered) return; G.answered=true;
+  var q=G.qs[G.i], ok=idx===q.a; if(ok) G.correct++;
+  var btns=$('opts').querySelectorAll('.opt');
+  btns.forEach(function(b,i){ b.disabled=true; if(i===q.a) b.classList.add('ok'); else if(i===idx) b.classList.add('no'); });
+  var last=G.i===G.qs.length-1;
+  $('fb').innerHTML='<div class="note '+(ok?'info':'bad')+'" style="margin-top:6px"><b>'+(ok?'Верно! ':'Не совсем. ')+'</b>'+esc(q.ex)+'</div>'+
+    '<button class="btn primary" id="btnNext" style="margin-top:10px">'+(last?'Посмотреть результат':'Дальше →')+'</button>';
+  $('btnNext').onclick=function(){ if(last) finishGame(G.g,Math.round(G.correct/G.qs.length*100),G.correct); else { G.i++; G.answered=false; showQ(); } };
+  $('btnNext').focus();
+}
+function finishGame(g,pct,correct){
+  ensureDay();
+  var k=gkey(g.id), rec=S.games[k]||{best:0,plays:0}, first=!rec.plays, prevBest=rec.best;
+  rec.plays++; rec.best=Math.max(rec.best,pct); S.games[k]=rec;
+  var xp=correct*10+(pct===100?20:0), coins=correct*5+(first?20:0);
+  addReward(xp,coins); touchStreak();
+  S.daily.plays++; S.daily.correct+=correct; if(pct===100) S.daily.perfect++;
+  addLog(g.e+' '+g.name+' ('+LEVELS[S.level].name+'): '+pct+'%');
+  save(); checkAch(); renderHeader();
+  var st=starsFor(pct);
+  $('gamePlayView').innerHTML=gameHead(g)+
+    '<div class="card stack" style="text-align:center"><div class="big-emoji">'+(pct>=80?'🎉':pct>=50?'👍':'💪')+'</div>'+
+    '<h2>'+(pct>=80?'Отлично!':pct>=50?'Хороший результат':'Попробуй ещё раз — получится!')+'</h2>'+
+    '<p class="stars" style="font-size:28px">'+starStr(st)+'</p><p><b>'+pct+'%</b>'+(pct>prevBest&&!first?' — новый рекорд!':'')+'</p>'+
+    '<p class="muted">+'+xp+' ⭐ опыта · +'+coins+' 🪙'+(first?' (бонус за первую игру)':'')+'</p></div>'+
+    '<div class="card" style="margin-top:14px"><h3>📘 Урок на минуту</h3><p>'+esc(g.lesson)+'</p></div>'+
+    '<div class="row" style="margin-top:14px"><button class="btn primary" data-play="'+g.id+'">Ещё раз</button><button class="btn" id="btnBack2">Другие игры</button><button class="btn" data-go="quests">Квесты</button></div>';
+  bindBack(); $('btnBack2').onclick=function(){ closeGame(); renderGames(); };
+}
+
+/* --- Игра «Собери бюджет» --- */
+function startBudget(g){
+  var B=BUDGET[S.level], v=$('gamePlayView');
+  var rows=B.items.map(function(it){ return '<div class="budget-row"><label for="b_'+it.k+'" style="margin:0">'+it.n+(it.need?' <span class="tag">нужно ≥ '+fmt(it.min)+'</span>':'')+(it.save?' <span class="tag green">копилка</span>':'')+'</label><input type="number" min="0" inputmode="numeric" id="b_'+it.k+'" placeholder="0"></div>'; }).join('');
+  v.innerHTML=gameHead(g)+'<div class="card stack"><h2>'+B.title+'</h2><p>У тебя есть <b>'+fmt(B.income)+'</b> (сумма условная). Распредели все деньги по статьям. Цель: хватить на всё нужное и отложить хотя бы 10%.</p>'+
+    rows+'<div class="kv"><span>Распределено</span><b id="bSum">0 ₸</b></div><div class="kv"><span>Осталось</span><b id="bLeft">'+fmt(B.income)+'</b></div>'+
+    '<div class="err" id="bErr"></div><div class="row"><button class="btn primary" id="bCheck">Проверить бюджет</button><button class="btn" id="bAuto">Подсказка</button></div><div id="bOut"></div></div>';
+  bindBack();
+  function vals(){ var o={},s=0; B.items.forEach(function(it){ var n=num($('b_'+it.k).value); if(!isFinite(n)||n<0) n=0; o[it.k]=Math.round(n); s+=o[it.k]; }); return {o:o,s:s}; }
+  function upd(){ var r=vals(); $('bSum').textContent=fmt(r.s); var left=B.income-r.s; $('bLeft').textContent=fmt(left); $('bLeft').className=left<0?'down':''; }
+  B.items.forEach(function(it){ $('b_'+it.k).addEventListener('input',upd); });
+  $('bAuto').onclick=function(){ $('bOut').innerHTML='<div class="note info" style="margin-top:8px">Начни с обязательных статей (у них стоит минимум). Потом отложи 10–20% в копилку. Остаток — на развлечения.</div>'; };
+  $('bCheck').onclick=function(){
+    var empty=B.items.every(function(it){ return $('b_'+it.k).value.trim()===''; });
+    var neg=B.items.some(function(it){ var n=num($('b_'+it.k).value); return $('b_'+it.k).value.trim()!=='' && (!isFinite(n)||n<0); });
+    if(empty){ $('bErr').textContent='Сначала впиши суммы хотя бы в одну статью.'; return; }
+    if(neg){ $('bErr').textContent='Суммы не могут быть отрицательными.'; return; }
+    $('bErr').textContent='';
+    var r=vals(), checks=[], score=0;
+    var balanced=r.s===B.income; checks.push([balanced, balanced?'Все деньги распределены.':(r.s>B.income?'Ты распределил больше, чем есть: перерасход '+fmt(r.s-B.income)+'.':'Осталось нераспределено '+fmt(B.income-r.s)+'. У каждого тенге должна быть задача.')]);
+    var miss=B.items.filter(function(it){ return it.need && r.o[it.k]<it.min; });
+    checks.push([miss.length===0, miss.length?'Не хватает на: '+miss.map(function(m){return m.n.toLowerCase();}).join(', ')+'.':'Все обязательные расходы закрыты.']);
+    var saveK=B.items.filter(function(it){return it.save;})[0].k, sp=r.o[saveK]/B.income*100;
+    checks.push([sp>=10, sp>=10?'Ты откладываешь '+Math.round(sp)+'% — отлично!':'Откладываешь '+Math.round(sp)+'%. Попробуй хотя бы 10%.']);
+    var fun=r.o.fun/B.income*100; checks.push([fun<=35, fun<=35?'Развлечения в разумных пределах.':'На развлечения уходит '+Math.round(fun)+'% — многовато.']);
+    checks.forEach(function(c){ if(c[0]) score+=25; });
+    $('bOut').innerHTML='<ul class="list" style="margin-top:8px">'+checks.map(function(c){ return '<li><span>'+(c[0]?'✅':'⚠️')+'</span><span class="grow">'+esc(c[1])+'</span></li>'; }).join('')+'</ul>'+
+      '<div class="row"><button class="btn primary" id="bFinish">Завершить с результатом '+score+'%</button><span class="small muted">или исправь цифры и проверь снова</span></div>';
+    $('bFinish').onclick=function(){ finishGame(g,score,score/25); };
+  };
+}
+
+/* ---------------- Квесты ---------------- */
+var QUEST_POOL=[
+  {id:'play1',t:'Пройди любую игру',need:1,f:function(){return S.daily.plays;}},
+  {id:'play2',t:'Пройди 2 игры',need:2,f:function(){return S.daily.plays;}},
+  {id:'correct5',t:'Дай 5 правильных ответов',need:5,f:function(){return S.daily.correct;}},
+  {id:'correct8',t:'Дай 8 правильных ответов',need:8,f:function(){return S.daily.correct;}},
+  {id:'perfect',t:'Пройди игру на 100%',need:1,f:function(){return S.daily.perfect;}},
+  {id:'search',t:'Найди ответ в «Помощнике»',need:1,f:function(){return S.daily.searches;},go:'helper'},
+  {id:'goal',t:'Добавь цель или пополни копилку',need:1,f:function(){return S.daily.goals;},go:'goals'},
+  {id:'market',t:'Доиграй Биржу до конца',need:1,f:function(){return S.daily.market;},go:'market'}
+];
+function todayQuests(){
+  var r=rng(hash(dayKey())), first=QUEST_POOL.slice(0,2), rest=shuffle(QUEST_POOL.slice(2),r);
+  return [first[Math.floor(r()*2)], rest[0], rest[1]];
+}
+function questsDone(){ ensureDay(); return todayQuests().filter(function(q){ return q.f()>=q.need; }).length; }
+function renderQuests(){
+  var qs=todayQuests(), list=$('questList'); list.innerHTML='';
+  qs.forEach(function(q){
+    var p=Math.min(q.f(),q.need), done=p>=q.need, li=document.createElement('li'); li.className='quest'+(done?' done':'');
+    li.innerHTML='<span>'+(done?'✅':'⬜')+'</span><div class="grow"><div class="qt">'+q.t+'</div><div class="progress" style="margin-top:4px"><i style="width:'+(p/q.need*100)+'%"></i></div></div><span class="small muted">'+p+'/'+q.need+'</span>'+
+      (!done?'<button class="btn sm" data-go="'+(q.go||'games')+'">Сделать</button>':'');
+    list.appendChild(li);
+  });
+  var all=questsDone()===3;
+  $('btnChest').disabled=!all||S.daily.chest;
+  $('chestIcon').textContent=S.daily.chest?'🎁':'🧰';
+  $('chestText').textContent=S.daily.chest?'Сундук на сегодня уже открыт. Завтра будут новые квесты!':(all?'Все квесты выполнены — открывай!':'Выполнено '+questsDone()+' из 3.');
+  renderLeague(); renderAch();
+}
+$('btnChest').onclick=function(){
+  ensureDay(); if(questsDone()<3||S.daily.chest) return;
+  var coins=20+Math.floor(Math.random()*41); S.daily.chest=true; S.chests++; addReward(15,coins); addLog('🎁 Открыт сундук: +'+coins+' 🪙');
+  save(); checkAch(); renderHeader(); renderQuests(); toast('🎁 В сундуке: +'+coins+' 🪙 и +15 ⭐');
+};
+var BOTS=['Арман (вымышл.)','Дана (вымышл.)','Тимур (вымышл.)','Айгерим (вымышл.)','Ерлан (вымышл.)','Мадина (вымышл.)','Нурсултан (вымышл.)'];
+function renderLeague(){
+  var wk=weekKey(), r=rng(hash(wk)), dayN=((new Date().getDay()+6)%7)+1;
+  var rows=BOTS.map(function(n){ return {n:n,xp:Math.round((20+r()*70)*dayN)}; });
+  rows.push({n:(S.name||'Ты')+' (ты)',xp:S.week.xp,me:true});
+  rows.sort(function(a,b){ return b.xp-a.xp; });
+  $('leagueTable').innerHTML='<thead><tr><th>#</th><th>Игрок</th><th class="num">Опыт за неделю</th></tr></thead><tbody>'+
+    rows.map(function(x,i){ return '<tr class="'+(x.me?'me':'')+'"><td>'+(i<3?['🥇','🥈','🥉'][i]:i+1)+'</td><td>'+esc(x.n)+'</td><td class="num">'+x.xp+'</td></tr>'; }).join('')+'</tbody>';
+}
+
+/* ---------------- Достижения ---------------- */
+var ACH=[
+  {id:'first',e:'🎮',n:'Первая игра',d:'Пройди любую игру',c:function(){ return anyGame(function(g){return g.plays>0;}); }},
+  {id:'three',e:'🌟',n:'Три звезды',d:'Пройди игру на 100%',c:function(){ return anyGame(function(g){return g.best>=100;}); }},
+  {id:'all',e:'🗺️',n:'Исследователь',d:'Сыграй во все игры хотя бы на одном уровне',c:function(){ return GAMES.every(function(g){ return ['school','teen','student'].some(function(l){ var r=S.games[g.id+':'+l]; return r&&r.plays>0; }); }); }},
+  {id:'safety',e:'🛡️',n:'Антимошенник',d:'«Развод или нет?» на 80%+',c:function(){ return ['school','teen','student'].some(function(l){ var r=S.games['safety:'+l]; return r&&r.best>=80; }); }},
+  {id:'streak3',e:'🔥',n:'Три дня подряд',d:'Играй 3 дня подряд',c:function(){ return S.streak.count>=3; }},
+  {id:'xp500',e:'⭐',n:'500 опыта',d:'Набери 500 ⭐',c:function(){ return S.xp>=500; }},
+  {id:'goal',e:'🐷',n:'Есть цель',d:'Добавь цель в копилку',c:function(){ return S.goals.length>0; }},
+  {id:'goaldone',e:'🏁',n:'Накопил!',d:'Доведи цель до 100%',c:function(){ return S.goals.some(function(g){return g.saved>=g.target;}); }},
+  {id:'chest',e:'🎁',n:'Охотник за сундуками',d:'Открой сундук',c:function(){ return S.chests>0; }},
+  {id:'trader',e:'📈',n:'Трейдер',d:'Закончи Биржу в плюсе',c:function(){ return S.marketBest!=null && S.marketBest>0; }}
+];
+function anyGame(f){ for(var k in S.games){ if(f(S.games[k])) return true; } return false; }
+function checkAch(){
+  ACH.forEach(function(a){ if(!S.ach[a.id] && a.c()){ S.ach[a.id]=Date.now(); addLog('🏅 Достижение: '+a.n); toast('🏅 Достижение: '+a.n); } });
+  save();
+}
+function renderAch(){
+  $('achGrid').innerHTML=ACH.map(function(a){ var has=!!S.ach[a.id];
+    return '<div class="row" style="opacity:'+(has?1:.45)+'"><span style="font-size:30px">'+(has?a.e:'🔒')+'</span><div><b>'+a.n+'</b><div class="small muted">'+a.d+'</div></div></div>'; }).join('');
+}
+
+/* ---------------- Копилка ---------------- */
+function renderGoals(){
+  var box=$('goalList');
+  if(!S.goals.length){ box.innerHTML='<div class="empty"><span class="e">🐷</span>Целей пока нет. Добавь первую — например, «Наушники, 15 000 ₸».</div>'; return; }
+  box.innerHTML='';
+  S.goals.forEach(function(g){
+    var pct=Math.min(100,Math.round(g.saved/g.target*100)), left=Math.max(0,g.target-g.saved), weeks=g.weekly>0?Math.ceil(left/g.weekly):null;
+    var d=document.createElement('div'); d.className='card'; d.style.marginTop='10px';
+    d.innerHTML='<div class="row" style="justify-content:space-between"><h3 style="margin:0">'+esc(g.name)+'</h3><span class="tag '+(pct>=100?'green':'blue')+'">'+(pct>=100?'Готово! 🎉':pct+'%')+'</span></div>'+
+      '<div class="progress" style="margin:10px 0"><i style="width:'+pct+'%"></i></div>'+
+      '<p class="small">Накоплено <b>'+fmt(g.saved)+'</b> из '+fmt(g.target)+'. '+(left>0?'Осталось '+fmt(left)+(weeks?' — примерно '+weeks+' '+plural(weeks,'неделя','недели','недель')+' при '+fmt(g.weekly)+' в неделю.':''):'Цель достигнута!')+'</p>'+
+      '<div class="row"><input type="number" min="1" inputmode="numeric" placeholder="Сумма, ₸" style="max-width:150px" aria-label="Сумма пополнения"><button class="btn sm primary" data-act="add">+ Пополнить</button><button class="btn sm" data-act="week">+ недельная сумма</button><button class="btn sm" data-act="sub">− Снять</button><button class="btn sm danger" data-act="del">Удалить</button></div><div class="err"></div>';
+    var inp=d.querySelector('input'), err=d.querySelector('.err');
+    d.querySelectorAll('[data-act]').forEach(function(b){ b.onclick=function(){
+      var act=b.dataset.act;
+      if(act==='del'){ if(confirm('Удалить цель «'+g.name+'»?')){ S.goals=S.goals.filter(function(x){return x.id!==g.id;}); save(); renderGoals(); } return; }
+      var v= act==='week' ? g.weekly : num(inp.value);
+      if(!isFinite(v)||v<=0){ err.textContent='Впиши сумму больше нуля.'; return; }
+      v=Math.round(v);
+      if(act==='sub'){ if(v>g.saved){ err.textContent='Нельзя снять больше, чем накоплено ('+fmt(g.saved)+').'; return; } g.saved-=v; }
+      else { var was=g.saved; g.saved+=v; ensureDay(); S.daily.goals++; addReward(5,0); if(was<g.target&&g.saved>=g.target){ toast('🏁 Цель «'+g.name+'» достигнута!'); addLog('🏁 Накоплено на «'+g.name+'»'); } }
+      save(); checkAch(); renderHeader(); renderGoals();
+    }; });
+    box.appendChild(d);
+  });
+}
+$('goalForm').onsubmit=function(e){
+  e.preventDefault();
+  var n=$('gName').value.trim(), t=num($('gTarget').value), w=num($('gWeekly').value), err=$('goalErr');
+  if(!n){ err.textContent='Напиши, на что копишь.'; $('gName').focus(); return; }
+  if(!isFinite(t)||t<=0){ err.textContent='Укажи стоимость больше нуля.'; $('gTarget').focus(); return; }
+  if(t>100000000){ err.textContent='Слишком большая сумма для копилки 🙂'; return; }
+  if(!isFinite(w)||w<=0){ err.textContent='Укажи, сколько откладываешь в неделю (больше нуля).'; $('gWeekly').focus(); return; }
+  err.textContent='';
+  S.goals.unshift({id:Date.now(),name:n.slice(0,40),target:Math.round(t),weekly:Math.round(w),saved:0});
+  ensureDay(); S.daily.goals++; addReward(5,5); addLog('🐷 Новая цель: '+n);
+  save(); checkAch(); renderHeader(); this.reset(); renderGoals();
+  var weeks=Math.ceil(t/w); toast('Цель добавлена: ~'+weeks+' '+plural(weeks,'неделя','недели','недель'));
+};
+function calc(){
+  var s=num($('cStart').value), m=num($('cMonthly').value), r=num($('cRate').value), y=num($('cYears').value), err=$('calcErr');
+  if([s,m,r,y].some(function(x){return !isFinite(x);})){ err.textContent='Заполни все четыре поля числами.'; $('calcOut').innerHTML=''; return; }
+  if(s<0||m<0||r<0||y<1){ err.textContent='Суммы и ставка не могут быть отрицательными, срок — от 1 года.'; return; }
+  if(r>50||y>40){ err.textContent='Ставка до 50%, срок до 40 лет.'; return; }
+  err.textContent='';
+  var bal=s, inv=s, mr=r/100/12, months=Math.round(y*12), pts=[];
+  for(var i=1;i<=months;i++){ bal=bal*(1+mr)+m; inv+=m; if(i%12===0) pts.push({y:i/12,b:bal,inv:inv}); }
+  var max=Math.max.apply(null,pts.map(function(p){return p.b;}))||1;
+  var bars=pts.map(function(p){ return '<div title="'+p.y+' г.: '+fmt(p.b)+'" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%"><div style="background:var(--brand);height:'+(p.b-p.inv)/max*100+'%;border-radius:4px 4px 0 0"></div><div style="background:var(--info-soft);height:'+p.inv/max*100+'%"></div></div>'; }).join('');
+  $('calcOut').innerHTML='<div class="kv"><span>Вложишь сам</span><b>'+fmt(inv)+'</b></div><div class="kv"><span>Проценты принесут</span><b class="up">+'+fmt(bal-inv)+'</b></div><div class="kv"><span>Итого через '+y+' '+plural(y,'год','года','лет')+'</span><b>'+fmt(bal)+'</b></div>'+
+    '<div style="display:flex;gap:3px;align-items:flex-end;height:110px;margin-top:10px" aria-hidden="true">'+bars+'</div><p class="small muted" style="margin-top:6px"><span style="color:var(--brand)">■</span> проценты · <span style="color:var(--info)">■</span> твои взносы. Условный расчёт: ставка в банках меняется, налоги и комиссии не учтены.</p>';
+}
+$('btnCalc').onclick=calc;
+
+/* ---------------- Помощник (не ИИ) ---------------- */
+var FAQ=[
+ {t:'Что такое бюджет?',k:'бюджет план расходы доходы деньги распределить',a:'Бюджет — это план: сколько денег придёт и куда они пойдут. Запиши доходы, потом обязательные траты, потом сколько отложишь, а остаток — на желания. Попробуй игру «Собери бюджет».',g:'budget'},
+ {t:'Как начать копить?',k:'копить накопить копилка сбережения откладывать',a:'Поставь конкретную цель (что и сколько стоит), реши, сколько откладываешь в неделю, и откладывай сразу, как получил деньги — «плати сначала себе». Добавь цель в раздел «Копилка» и смотри прогресс.',go:'goals'},
+ {t:'Что такое кредит?',k:'кредит долг займ заём банк взять в долг',a:'Кредит — это деньги банка в долг. Возвращать нужно больше, чем взял: сверху идут проценты. Перед кредитом посчитай итоговую переплату и подумай, можно ли накопить самому.',g:'compound'},
+ {t:'Что такое процент и сложный процент?',k:'процент проценты сложный капитализация ставка годовых',a:'Процент — плата за деньги: банк платит тебе за вклад или ты платишь банку за кредит. Сложный процент — когда проценты начисляются и на прошлые проценты. Так растут и вклады, и долги.',g:'compound'},
+ {t:'Что такое инфляция?',k:'инфляция цены растут дорожает',a:'Инфляция — рост цен. Если цены выросли на 10%, на те же деньги можно купить меньше. Поэтому деньги «под подушкой» со временем дешевеют.'},
+ {t:'Что такое депозит (вклад)?',k:'депозит вклад банк положить хранить',a:'Депозит — это когда ты кладёшь деньги в банк, а банк платит за это проценты. В Казахстане вклады граждан застрахованы государством в пределах установленного лимита. Ребёнку открыть депозит помогают родители.'},
+ {t:'Как распознать мошенника?',k:'мошенник мошенники развод обман фишинг смс код',a:'Тревожные признаки: торопят, просят код из SMS, пароль, CVV или фото карты, обещают «лёгкие деньги» или выигрыш. Никому не сообщай коды. Положи трубку или закрой чат и расскажи взрослому.',g:'safety'},
+ {t:'Мне написали, что я выиграл приз',k:'выиграл приз розыгрыш подарок',a:'Если ты ни в чём не участвовал — это почти точно обман. Не переходи по ссылкам и не вводи данные. Покажи сообщение взрослому.',g:'safety'},
+ {t:'Что такое финансовая пирамида?',k:'пирамида гарантированный доход инвестиции в месяц',a:'Пирамида платит старым участникам деньгами новых. Признаки: гарантированный высокий доход, «приведи друга», непонятно, откуда прибыль. Рано или поздно рушится, и большинство теряет деньги.',g:'safety'},
+ {t:'Кто такие «дропы»?',k:'дроп дропы карта одолжить переводы',a:'«Дроп» — человек, через карту которого мошенники гоняют украденные деньги. За это предлагают «лёгкий заработок». Это незаконно: владельца карты могут привлечь к ответственности. Никому не давай свою карту.',g:'safety'},
+ {t:'Что такое акции?',k:'акции акция биржа инвестиции компания',a:'Акция — маленькая доля компании. Цена акции может расти и падать. Инвестировать стоит только в то, что понимаешь, и только деньги, которые не понадобятся скоро. Потренируйся в разделе «Биржа».',go:'market'},
+ {t:'Что такое диверсификация?',k:'диверсификация риск разные корзины',a:'Это «не класть все яйца в одну корзину»: делить деньги между разными вложениями. Риск становится меньше, но не исчезает совсем.',go:'market'},
+ {t:'Что такое подушка безопасности?',k:'подушка безопасности резерв запас',a:'Запас денег на случай непредвиденных ситуаций — обычно на 3–6 месяцев расходов. Хранить его лучше там, откуда можно быстро снять.'},
+ {t:'Как отличить «нужно» от «хочу»?',k:'нужно хочу потребности желания покупка',a:'«Нужно» — без этого сложно жить или учиться. «Хочу» — можно подождать. Помогает правило 24 часов: захотел — подожди день.',g:'needwant'},
+ {t:'Что такое зарплата «на руки»?',k:'зарплата на руки грязная чистая налог удержания',a:'Это сумма после удержаний. В Казахстане из зарплаты работника удерживают пенсионные взносы (ОПВ) и подоходный налог (ИПН). Точные правила и вычеты меняются — уточняй на официальных сайтах.',g:'job'},
+ {t:'С какого возраста можно работать?',k:'работа возраст подработка подросток трудовой договор',a:'По Трудовому кодексу РК обычно с 16 лет. С 14–15 лет возможна лёгкая работа в свободное от учёбы время, но только с письменного согласия родителя. Детали лучше проверить вместе со взрослыми.',g:'job'},
+ {t:'Что такое налоги?',k:'налог налоги ипн опв зачем',a:'Налоги — обязательные платежи государству. Из них финансируются школы, больницы, дороги. Работник платит, например, подоходный налог (ИПН) со своей зарплаты.',g:'job'},
+ {t:'Что такое кешбэк?',k:'кешбэк кэшбек cashback возврат',a:'Кешбэк — часть денег, которая возвращается за покупку. Приятно, но не повод покупать лишнее: вернут небольшой процент, а потратишь всю сумму.'},
+ {t:'Что такое подписка и как не переплачивать?',k:'подписка подписки сервис ежемесячно',a:'Подписка списывает деньги каждый месяц. Раз в месяц проверяй, какими подписками ты реально пользуешься, и отключай лишние.'},
+ {t:'Как безопасно платить в интернете?',k:'оплата интернет онлайн покупка карта безопасно сайт',a:'Покупай на знакомых сайтах, проверяй адрес сайта, не вводи данные карты по ссылкам из сообщений, не сообщай коды из SMS. Лучше платить вместе с родителями.',g:'safety'}
+];
+var CHIPS=['кредит','копить','мошенник','инфляция','акции','налоги','подписка','депозит'];
+function norm(s){ return s.toLowerCase().replace(/ё/g,'е').replace(/[^a-zа-яәіңғүұқөһ0-9\s]/gi,' ').replace(/\s+/g,' ').trim(); }
+function stem(w){ return w.length>5?w.slice(0,w.length-2):w; }
+function searchFaq(q){
+  var words=norm(q).split(' ').filter(function(w){ return w.length>=3 && ['что','как','это','такое','для','мне','где','или','зачем','почему','можно'].indexOf(w)<0; });
+  if(!words.length) return null;
+  return FAQ.map(function(f){ var hay=norm(f.t+' '+f.k), s=0; words.forEach(function(w){ if(hay.indexOf(stem(w))>=0) s+=hay.indexOf(' '+stem(w))>=0||hay.indexOf(stem(w))===0?2:1; }); return {f:f,s:s}; })
+    .filter(function(x){return x.s>0;}).sort(function(a,b){return b.s-a.s;}).slice(0,4).map(function(x){return x.f;});
+}
+function renderHelper(){
+  var c=$('helpChips'); if(c.childElementCount) return;
+  CHIPS.forEach(function(w){ var b=document.createElement('button'); b.className='chip'; b.textContent=w; b.onclick=function(){ $('helpQ').value=w; doSearch(); }; c.appendChild(b); });
+  showFaqList(FAQ.slice(0,4),'Частые вопросы');
+}
+function showFaqList(items,title){
+  $('helpResults').innerHTML=(title?'<h3>'+title+'</h3>':'')+items.map(function(f){
+    var g=f.g?GAMES.filter(function(x){return x.id===f.g;})[0]:null;
+    return '<div class="card faq"><h3>'+esc(f.t)+'</h3><p>'+esc(f.a)+'</p>'+(g?'<button class="btn sm" data-play="'+g.id+'">'+g.e+' Закрепить в игре «'+g.name+'»</button>':'')+(f.go?'<button class="btn sm" data-go="'+f.go+'">Перейти</button>':'')+'</div>'; }).join('');
+}
+function doSearch(){
+  var q=$('helpQ').value.trim(), err=$('helpErr');
+  if(!q){ err.textContent='Напиши вопрос или нажми на одну из подсказок ниже.'; return; }
+  err.textContent='';
+  var res=searchFaq(q);
+  ensureDay();
+  if(!res||!res.length){
+    $('helpResults').innerHTML='<div class="card empty"><span class="e">🤔</span>По запросу «'+esc(q)+'» ничего не нашлось.<br>Попробуй другое слово (например, «кредит», «копить», «мошенник») или спроси взрослого, которому доверяешь.</div>';
+    return;
+  }
+  S.daily.searches++; save();
+  showFaqList(res,'Нашлось: '+res.length);
+}
+$('helpForm').onsubmit=function(e){ e.preventDefault(); doSearch(); };
+
+/* ---------------- Биржа-тренажёр ---------------- */
+var STOCKS=[{k:'TECH',n:'Барыс Тех',d:'приложения',p:2000},{k:'ENRG',n:'Самал Энерго',d:'электричество',p:1500},{k:'FOOD',n:'Нан и Ко',d:'пекарни',p:500},{k:'TRNS',n:'Жол Транс',d:'доставка',p:1000}];
+var NEWS=[
+  {t:'Барыс Тех выпустила популярное приложение для школьников',e:{TECH:.18}},
+  {t:'Холодная зима: людям нужно больше электричества',e:{ENRG:.12,TRNS:-.05}},
+  {t:'Мука подорожала — пекарням стало сложнее',e:{FOOD:-.12}},
+  {t:'Жол Транс открыла доставку в новые города',e:{TRNS:.15}},
+  {t:'В приложении Барыс Тех нашли ошибку, пользователи недовольны',e:{TECH:-.2}},
+  {t:'Спокойная неделя: важных новостей нет',e:{}},
+  {t:'Новые пекарни Нан и Ко очень понравились покупателям',e:{FOOD:.15}},
+  {t:'Бензин подорожал — доставка стала дороже',e:{TRNS:-.12,ENRG:.05}},
+  {t:'Весь рынок падает из-за общих страхов',e:{TECH:-.08,ENRG:-.06,FOOD:-.04,TRNS:-.07}},
+  {t:'Государство строит новые электростанции',e:{ENRG:.1}}
+];
+var ROUNDS=8, START_CASH=100000, M=null;
+function newMarket(){
+  var r=rng((Date.now()&0xffffffff)>>>0);
+  M={round:1,cash:START_CASH,hold:{},price:{},prev:{},news:shuffle(NEWS,r).slice(0,ROUNDS),r:r,done:false,lastNews:null};
+  STOCKS.forEach(function(s){ M.price[s.k]=s.p; M.prev[s.k]=s.p; M.hold[s.k]=0; });
+}
+function mValue(){ var v=M.cash; STOCKS.forEach(function(s){ v+=M.hold[s.k]*M.price[s.k]; }); return v; }
+function renderMarket(){
+  var box=$('marketBox');
+  if(!M){
+    box.innerHTML='<p>Тебе дают <b>'+fmt(START_CASH)+'</b> игровых денег. Будет '+ROUNDS+' раундов. В каждом — новость, после которой цены меняются. Покупай и продавай акции четырёх вымышленных компаний. В конце всё продаётся, и ты видишь результат.</p>'+
+      (S.marketBest!=null?'<p class="small muted">Твой лучший результат: <b class="'+(S.marketBest>=0?'up':'down')+'">'+(S.marketBest>=0?'+':'')+fmt(S.marketBest)+'</b></p>':'')+
+      '<button class="btn primary" id="mStart">Начать игру</button>';
+    $('mStart').onclick=function(){ newMarket(); renderMarket(); };
+    return;
+  }
+  if(M.done){ return; }
+  var val=mValue(), diff=val-START_CASH;
+  var rows=STOCKS.map(function(s){
+    var p=M.price[s.k], ch=(p-M.prev[s.k])/M.prev[s.k]*100;
+    return '<tr><td><b>'+s.n+'</b><div class="small muted">'+s.d+' · вымышл.</div></td><td class="num">'+fmt(p)+'<div class="small '+(ch>0.05?'up':ch<-0.05?'down':'muted')+'">'+(M.round>1?(ch>0?'+':'')+ch.toFixed(1)+'%':'—')+'</div></td><td class="num">'+M.hold[s.k]+'</td>'+
+      '<td><div class="qty"><input type="number" min="1" value="1" id="q_'+s.k+'" aria-label="Количество '+s.n+'"><button class="btn sm" data-buy="'+s.k+'">Купить</button><button class="btn sm" data-sell="'+s.k+'">Продать</button></div></td></tr>';
+  }).join('');
+  box.innerHTML='<div class="row" style="justify-content:space-between"><b>Раунд '+M.round+' из '+ROUNDS+'</b><span>Портфель: <b>'+fmt(val)+'</b> <span class="'+(diff>=0?'up':'down')+'">('+(diff>=0?'+':'')+fmt(diff)+')</span></span></div>'+
+    (M.lastNews?'<div class="note info" style="margin-top:10px">📰 '+esc(M.lastNews)+'</div>':'<div class="note info" style="margin-top:10px">📰 Рынок открылся. Купи акции и нажми «Следующий раунд».</div>')+
+    '<div class="tbl-scroll" style="margin-top:10px"><table><thead><tr><th>Компания</th><th class="num">Цена</th><th class="num">У тебя</th><th>Действие</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+    '<div class="kv"><span>Свободные деньги</span><b>'+fmt(M.cash)+'</b></div><div class="err" id="mErr"></div>'+
+    '<div class="row"><button class="btn primary" id="mNext">'+(M.round<ROUNDS?'Следующий раунд →':'Завершить и продать всё')+'</button><button class="btn ghost" id="mQuit">Начать заново</button></div>';
+  box.querySelectorAll('[data-buy],[data-sell]').forEach(function(b){ b.onclick=function(){
+    var k=b.dataset.buy||b.dataset.sell, q=Math.floor(num($('q_'+k).value)), err=$('mErr');
+    if(!isFinite(q)||q<=0){ err.textContent='Укажи количество — целое число больше нуля.'; return; }
+    if(b.dataset.buy){ var cost=q*M.price[k]; if(cost>M.cash){ err.textContent='Не хватает денег: нужно '+fmt(cost)+', есть '+fmt(M.cash)+'.'; return; } M.cash-=cost; M.hold[k]+=q; }
+    else { if(q>M.hold[k]){ err.textContent='У тебя только '+M.hold[k]+' акций этой компании.'; return; } M.cash+=q*M.price[k]; M.hold[k]-=q; }
+    renderMarket();
+  }; });
+  $('mQuit').onclick=function(){ if(confirm('Начать игру заново? Текущий прогресс в Бирже пропадёт.')){ M=null; renderMarket(); } };
+  $('mNext').onclick=function(){
+    if(M.round>=ROUNDS){ endMarket(); return; }
+    var n=M.news[M.round-1];
+    STOCKS.forEach(function(s){ M.prev[s.k]=M.price[s.k]; var ch=(n.e[s.k]||0)+(M.r()-.5)*.06; M.price[s.k]=Math.max(50,Math.round(M.price[s.k]*(1+ch))); });
+    M.lastNews=n.t; M.round++; renderMarket();
+  };
+}
+function endMarket(){
+  var val=mValue(), diff=Math.round(val-START_CASH), held=STOCKS.filter(function(s){return M.hold[s.k]>0;}).length;
+  M.done=true; ensureDay(); S.daily.market++;
+  S.marketBest = S.marketBest==null?diff:Math.max(S.marketBest,diff);
+  addReward(30,10); touchStreak(); addLog('📈 Биржа: '+(diff>=0?'+':'')+fmt(diff)); save(); checkAch(); renderHeader();
+  var lesson = held>=3 ? 'Ты держал акции нескольких компаний — это диверсификация. Она снижает риск: если одна компания падает, другие могут вырасти.' :
+               held===0 && diff===0 ? 'Ты ничего не купил — и ничего не потерял. Но и не заработал: без риска нет дохода.' :
+               'У тебя было мало разных компаний. Если именно они падают, теряешь много. Попробуй разделить деньги между разными акциями.';
+  $('marketBox').innerHTML='<div style="text-align:center"><div class="big-emoji">'+(diff>0?'📈':diff<0?'📉':'➖')+'</div><h2>Итог: '+fmt(val)+'</h2><p class="'+(diff>=0?'up':'down')+'" style="font-size:20px">'+(diff>=0?'+':'')+fmt(diff)+'</p><p class="muted">+30 ⭐ · +10 🪙</p></div>'+
+    '<div class="note info">📘 '+lesson+' Помни: в жизни новости не подписаны заранее, а цены зависят от многих причин. Здесь всё вымышленное.</div>'+
+    '<div class="row" style="margin-top:12px"><button class="btn primary" id="mAgain">Сыграть ещё</button><button class="btn" data-go="quests">К квестам</button></div>';
+  $('mAgain').onclick=function(){ newMarket(); renderMarket(); };
+}
+
+/* ---------------- Родителям ---------------- */
+function renderParents(){
+  var plays=0,sum=0,cnt=0; for(var k in S.games){ plays+=S.games[k].plays; sum+=S.games[k].best; cnt++; }
+  var avg=cnt?Math.round(sum/cnt):0;
+  $('parentStats').innerHTML=
+    '<div class="card stat"><span class="small muted">Сыграно партий</span><b>'+plays+'</b></div>'+
+    '<div class="card stat"><span class="small muted">Средний лучший результат</span><b>'+(cnt?avg+'%':'—')+'</b></div>'+
+    '<div class="card stat"><span class="small muted">Дней подряд / целей</span><b>'+S.streak.count+' / '+S.goals.length+'</b></div>';
+  var tRows=GAMES.map(function(g){
+    var best=0,lv=''; ['school','teen','student'].forEach(function(l){ var r=S.games[g.id+':'+l]; if(r&&r.best>=best&&r.plays){ best=r.best; lv=LEVELS[l].name; } });
+    return {g:g,best:best,lv:lv};
+  });
+  if(!plays){ $('parentTopics').innerHTML='<div class="empty"><span class="e">📊</span>Пока нет сыгранных игр на этом устройстве.</div>'; }
+  else $('parentTopics').innerHTML=tRows.map(function(x){ return '<div style="margin:8px 0"><div class="row" style="justify-content:space-between"><span>'+x.g.e+' '+x.g.topic+'</span><span class="small '+(x.lv&&x.best<60?'down':'muted')+'">'+(x.lv?x.best+'% · '+x.lv:'не играл')+'</span></div><div class="progress"><i style="width:'+x.best+'%"></i></div></div>'; }).join('');
+  $('parentLog').innerHTML = S.log.length ? '<ul class="list small">'+S.log.slice(0,8).map(function(l){ var d=new Date(l.t); return '<li><span class="muted" style="min-width:90px">'+pad(d.getDate())+'.'+pad(d.getMonth()+1)+' '+pad(d.getHours())+':'+pad(d.getMinutes())+'</span><span class="grow">'+esc(l.text)+'</span></li>'; }).join('')+'</ul>' : '<div class="empty"><span class="e">🕒</span>Действий пока нет.</div>';
+  var weak=tRows.filter(function(x){ return x.lv && x.best<60; });
+  var tips=[];
+  weak.forEach(function(x){ tips.push('Тема «'+x.g.topic+'» пока даётся сложнее ('+x.best+'%). '+x.g.lesson.split('. ')[0]+'.'); });
+  tips.push('Предложите ребёнку самому спланировать небольшую покупку: цена, сколько откладывать, сколько недель.');
+  tips.push('Расскажите, как вы проверяете подозрительные звонки и сообщения. Договоритесь: коды из SMS никому не сообщаем.');
+  if(S.goals.length) tips.push('У ребёнка есть цель «'+S.goals[0].name+'». Спросите, как продвигается копилка.');
+  $('parentTips').innerHTML='<ul class="small" style="padding-left:18px;margin:0">'+tips.slice(0,4).map(function(t){return '<li style="margin-bottom:6px">'+esc(t)+'</li>';}).join('')+'</ul>';
+  var rep='Отчёт FinWise ('+dayKey()+')\n'+(S.name?'Имя: '+S.name+'\n':'')+'Уровень: '+LEVELS[S.level].name+', уровень игрока '+playerLevel()+', опыт '+S.xp+'\nСыграно партий: '+plays+', средний лучший результат: '+(cnt?avg+'%':'—')+'\nДней подряд: '+S.streak.count+'\n'+
+    tRows.map(function(x){ return '• '+x.g.name+': '+(x.lv?x.best+'% ('+x.lv+')':'не играл'); }).join('\n')+
+    (S.goals.length?'\nЦели: '+S.goals.map(function(g){return g.name+' '+Math.min(100,Math.round(g.saved/g.target*100))+'%';}).join(', '):'')+'\n(данные только с этого устройства)';
+  $('reportText').value=rep;
+}
+function copyText(text,okMsg){
+  function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); var ok=false; try{ ok=document.execCommand('copy'); }catch(e){} ta.remove(); toast(ok?okMsg:'Не получилось скопировать — выдели текст вручную.'); }
+  if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(function(){ toast(okMsg); },fallback); } else fallback();
+}
+$('btnCopyReport').onclick=function(){ copyText($('reportText').value,'Отчёт скопирован'); };
+
+/* ---------------- Отзывы ---------------- */
+function renderFeedback(){
+  $('fbCount').textContent=S.feedback.length;
+  if(!S.feedback.length){ $('fbList').innerHTML='<div class="empty"><span class="e">📝</span>Отзывов пока нет.</div>'; return; }
+  var avg=S.feedback.reduce(function(a,f){return a+f.rate;},0)/S.feedback.length;
+  $('fbList').innerHTML='<p class="small">Средняя оценка: <b>'+avg.toFixed(1)+' / 5</b></p>'+S.feedback.map(function(f,i){
+    return '<div class="card" style="margin-top:8px;padding:12px"><div class="row" style="justify-content:space-between"><b>'+'★'.repeat(f.rate)+'☆'.repeat(5-f.rate)+'</b><span class="small muted">'+(f.age?f.age+' лет · ':'')+f.date+'</span></div>'+
+      (f.like?'<p class="small" style="margin:6px 0 0">👍 '+esc(f.like)+'</p>':'')+(f.fix?'<p class="small" style="margin:6px 0 0">🔧 '+esc(f.fix)+'</p>':'')+
+      '<button class="btn sm ghost danger" data-fbdel="'+i+'" style="margin-top:6px">Удалить</button></div>'; }).join('');
+  document.querySelectorAll('[data-fbdel]').forEach(function(b){ b.onclick=function(){ S.feedback.splice(+b.dataset.fbdel,1); save(); renderFeedback(); }; });
+}
+$('fbForm').onsubmit=function(e){
+  e.preventDefault();
+  var age=$('fbAge').value.trim(), rate=$('fbRate').value, like=$('fbLike').value.trim(), fix=$('fbFix').value.trim(), err=$('fbErr');
+  if(!rate){ err.textContent='Поставь оценку от 1 до 5.'; $('fbRate').focus(); return; }
+  if(age){ var a=num(age); if(!isFinite(a)||a<6||a>99){ err.textContent='Возраст — число от 6 до 99 (или оставь пустым).'; return; } }
+  if(!like&&!fix){ err.textContent='Напиши хотя бы одно: что понравилось или что исправить.'; return; }
+  err.textContent='';
+  S.feedback.unshift({age:age?Math.round(num(age)):'',rate:+rate,like:like,fix:fix,date:dayKey()});
+  save(); this.reset(); renderFeedback(); toast('Отзыв сохранён. Спасибо!');
+};
+$('btnCopyFb').onclick=function(){
+  if(!S.feedback.length){ toast('Пока нечего копировать — отзывов нет.'); return; }
+  copyText('Отзывы тестеров FinWise\n'+S.feedback.map(function(f,i){ return (i+1)+'. Оценка '+f.rate+'/5'+(f.age?', '+f.age+' лет':'')+', '+f.date+(f.like?'\n   Понравилось: '+f.like:'')+(f.fix?'\n   Исправить: '+f.fix:''); }).join('\n'),'Отзывы скопированы');
+};
+$('btnReset').onclick=function(){
+  if(!confirm('Точно сбросить весь прогресс, цели и отзывы? Это нельзя отменить.')) return;
+  S=defaultState(); M=null; save(); toast('Прогресс сброшен'); go('home');
+};
+
+/* ---------------- Старт ---------------- */
+if(!storageOK) $('storageWarn').classList.remove('hide');
+ensureDay(); save();
+go((location.hash||'#home').slice(1), false);
+})();
+</script>
+</body>
+</html>
