@@ -183,6 +183,11 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;font-size:14px;color
     </div>
   </div>
 
+  <a class="card" href="game.html" style="display:flex;gap:14px;align-items:center;margin-top:20px;text-decoration:none;color:inherit;border-color:var(--brand)">
+    <span style="font-size:44px">🐷</span>
+    <span style="flex:1"><span class="tag">Новая игра</span><b style="display:block;font-size:18px;margin-top:4px">Копилка под дождём монет</b><span class="small muted">Лови деньги и уворачивайся от ловушек: скидок, мошенников и лишних подписок. Накопи 10 000 ₸ за 60 секунд!</span></span>
+    <span class="btn primary">Играть</span>
+  </a>
   <div class="grid g3" style="margin-top:20px" id="homeStats"></div>
 
   <div class="grid g2" style="margin-top:20px">
@@ -669,6 +674,9 @@ function renderGames(){
       '<button class="btn primary" data-play="'+g.id+'">'+(b?'Сыграть ещё':'Играть')+'</button>';
     grid.appendChild(d);
   });
+  var ad=document.createElement('a'); ad.className='card game'; ad.href='game.html'; ad.style.textDecoration='none'; ad.style.color='inherit'; ad.style.borderColor='var(--brand)';
+  ad.innerHTML='<div class="row" style="justify-content:space-between"><span class="e">🐷</span><span class="tag">Новое · аркада</span></div><h3>Копилка под дождём монет</h3><p class="small muted" style="flex:1">Лови деньги, уворачивайся от ловушек. Работает мышью и пальцем.</p><span class="btn primary" style="text-align:center">Играть</span>';
+  grid.insertBefore(ad,grid.firstChild);
   $('mapProgress').style.width=Math.round(total/(GAMES.length*3)*100)+'%';
 }
 document.addEventListener('click',function(e){ var t=e.target.closest('[data-play]'); if(!t) return; startGame(t.dataset.play); });
