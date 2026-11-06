@@ -13,6 +13,7 @@
   --accent:#f59e0b; --accent-soft:#fdf0d5; --danger:#dc2626; --danger-soft:#fde4e4;
   --info:#2563eb; --info-soft:#e0eaff;
   --radius:16px; --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 16px rgba(0,0,0,.05);
+  --fp-food:#C2650F; --fp-transport:#0E86A6; --fp-subs:#CF4A7F; --fp-fun:#7468E0; --fp-saving:#148F6E;
 }
 @media (prefers-color-scheme: dark){
   :root{
@@ -21,6 +22,7 @@
     --accent:#fbbf24; --accent-soft:#3a2f12; --danger:#f87171; --danger-soft:#3b1a1a;
     --info:#60a5fa; --info-soft:#172a48;
     --shadow:0 1px 2px rgba(0,0,0,.3);
+    --fp-food:#D1721B; --fp-transport:#1C9CBC; --fp-subs:#D9578A; --fp-fun:#8A80EA; --fp-saving:#1FA882;
   }
 }
 *{box-sizing:border-box}
@@ -124,6 +126,31 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;font-size:14px;color
 .budget-row{display:grid;grid-template-columns:1fr 130px;gap:10px;align-items:center;padding:6px 0}
 @media (max-width:420px){.budget-row{grid-template-columns:1fr 110px}}
 .sr{position:absolute;left:-9999px}
+section[data-view]{scroll-margin-top:120px}
+.chip[aria-pressed="true"]{border-color:var(--brand);background:var(--brand-soft);font-weight:700}
+.note.good{border-color:var(--brand);background:var(--brand-soft)}
+.fp-layout{display:grid;gap:14px;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
+@media (max-width:860px){.fp-layout{grid-template-columns:minmax(0,1fr)}}
+@media (min-width:861px){.fp-side{position:sticky;top:112px}}
+.fp-bar{display:flex;gap:2px;height:14px;margin:12px 0}
+.fp-bar i{display:block;min-width:2px}
+.fp-bar i:first-child{border-radius:4px 0 0 4px}
+.fp-bar i:last-child{border-radius:0 4px 4px 0}
+.fp-bar .fp-none{flex:1;background:var(--line);border-radius:4px}
+.fp-row{display:flex;align-items:center;gap:8px;padding:5px 0}
+.fp-row .grow{flex:1;min-width:0;font-size:14px;font-weight:600}
+.fp-dot{flex:0 0 10px;width:10px;height:10px;border-radius:50%;display:inline-block}
+.fp-qty input{width:88px}
+.fp-qty .btn{min-width:36px;padding:6px 0}
+.fp-left{align-items:center;border-top:1px solid var(--line);margin-top:6px;padding-top:10px}
+.fp-step{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:5px 0}
+.fp-step b{min-width:92px;text-align:center}
+.fp-hero{font-size:clamp(34px,6vw,44px);font-weight:800;line-height:1.1;font-variant-numeric:tabular-nums;margin:2px 0}
+.fp-result{border:2px solid var(--brand)}
+.fp-sum{display:block;font-weight:800;margin-top:4px;font-variant-numeric:tabular-nums}
+.fp-fit{display:block;font-size:12px;font-weight:700;margin-top:4px}
+.fp-place{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fp-place .chip{padding:10px 6px;border-radius:12px;font-weight:600;min-height:44px}
 </style>
 </head>
 <body>
@@ -142,6 +169,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;font-size:14px;color
       <button data-go="games">🗺️ Игры</button>
       <button data-go="quests">🎯 Квесты и лига</button>
       <button data-go="goals">🐷 Копилка</button>
+      <button data-go="plan">📊 Финплан</button>
       <button data-go="helper">💬 Помощник</button>
       <button data-go="market">📈 Биржа</button>
       <button data-go="parents">👨‍👩‍👧 Родителям</button>
@@ -187,6 +215,11 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;font-size:14px;color
     <span style="font-size:44px">🐷</span>
     <span style="flex:1"><span class="tag">Новая игра</span><b style="display:block;font-size:18px;margin-top:4px">Копилка под дождём монет</b><span class="small muted">Лови деньги и уворачивайся от ловушек: скидок, мошенников и лишних подписок. Накопи 10 000 ₸ за 60 секунд!</span></span>
     <span class="btn primary">Играть</span>
+  </a>
+  <a class="card" href="#plan" data-go="plan" style="display:flex;gap:14px;align-items:center;margin-top:14px;text-decoration:none;color:inherit;border-color:var(--brand)">
+    <span style="font-size:44px">📊</span>
+    <span style="flex:1"><span class="tag">Новое</span><b style="display:block;font-size:18px;margin-top:4px">Финплан на мечту</b><span class="small muted">Самокат, iPhone или своё: впиши цену и свои деньги, и узнаешь, сколько и когда откладывать.</span></span>
+    <span class="btn primary">Открыть</span>
   </a>
   <div class="grid g3" style="margin-top:20px" id="homeStats"></div>
 
@@ -259,7 +292,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;font-size:14px;color
   <div class="grid g2">
     <div class="card">
       <h2>🐷 Новая цель</h2>
-      <p class="small muted">Запиши, на что копишь. Мы посчитаем, сколько недель понадобится.</p>
+      <p class="small muted">Запиши, на что копишь. Мы посчитаем, сколько недель понадобится. Не знаешь, сколько откладывать? <a href="#plan" data-go="plan">Посчитай в Финплане</a>.</p>
       <form id="goalForm" novalidate class="stack">
         <div><label for="gName">На что копишь?</label><input type="text" id="gName" maxlength="40" placeholder="Наушники, велосипед, подарок маме…"></div>
         <div class="grid g2" style="gap:10px">
@@ -288,6 +321,69 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;font-size:14px;color
     <div class="row" style="justify-content:space-between"><h2 style="margin:0">Мои цели</h2><span class="small muted">Хранятся только в этом браузере</span></div>
     <div id="goalList" style="margin-top:8px"></div>
   </div>
+</section>
+
+<!-- ================= ФИНПЛАН ================= -->
+<section id="plan" data-view class="hide">
+  <h2 style="margin-bottom:4px">📊 Финплан на мечту</h2>
+  <p class="muted">Впиши мечту и свои деньги: посчитаем, сколько и когда откладывать. Меняй цифры и смотри, что будет.</p>
+  <div class="fp-layout" style="margin-top:14px">
+    <div class="stack">
+      <div class="card stack">
+        <h3>🎯 На что копишь</h3>
+        <div class="chips" id="fpGoals"></div>
+        <p class="small muted" style="margin:6px 0 0">Цены в подсказках примерные: впиши настоящую.</p>
+        <div><label for="fpTitle">Мечта</label><input type="text" id="fpTitle" maxlength="40" placeholder="Самокат, наушники, подарок маме…"></div>
+        <div class="grid g2" style="gap:10px">
+          <div><label for="fpPrice">Цена сегодня, ₸</label><input type="text" inputmode="numeric" id="fpPrice" placeholder="0"></div>
+          <div><label for="fpSaved">Уже накоплено, ₸</label><input type="text" inputmode="numeric" id="fpSaved" placeholder="0"></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>💰 Мои деньги в месяц</h3>
+        <label for="fpIncome" style="margin-top:10px">Сколько получаю, ₸ (родители + подработка)</label>
+        <input type="text" inputmode="numeric" id="fpIncome" placeholder="0">
+        <div class="fp-bar" id="fpBar" aria-hidden="true"></div>
+        <div id="fpSpend"></div>
+        <div class="kv fp-left"><span class="row" style="gap:8px"><span class="fp-dot" style="background:var(--fp-saving)"></span><b>Остаётся на мечту</b></span><b id="fpLeft"></b></div>
+        <div class="note bad hide" id="fpOver" style="margin-top:8px"></div>
+        <button class="btn sm hide" id="fpSuggest" style="margin-top:10px">Подсказать распределение</button>
+      </div>
+      <div class="card">
+        <h3>📅 Когда хочу купить</h3>
+        <div class="fp-step"><span class="small" style="font-weight:600">Через</span><span class="qty"><button class="btn sm" id="fpMonthsDown" style="min-width:36px" aria-label="На месяц раньше">−</button><b id="fpMonths" style="min-width:110px;text-align:center"></b><button class="btn sm" id="fpMonthsUp" style="min-width:36px" aria-label="На месяц позже">+</button></span></div>
+        <div class="chips" id="fpTerms" style="margin-top:4px"></div>
+        <h3 style="margin-top:18px">🏦 Где лежат деньги</h3>
+        <div class="fp-place" style="margin-top:8px">
+          <button class="chip" id="fpJar" aria-pressed="true">🐷 Копилка дома</button>
+          <button class="chip" id="fpDeposit" aria-pressed="false">🏦 Вклад в банке</button>
+        </div>
+        <div class="fp-step hide" id="fpRateRow" style="margin-top:8px"><span class="small" style="font-weight:600">Процент на вкладе в год</span><span class="qty"><button class="btn sm" id="fpRateDown" style="min-width:36px" aria-label="Меньше процент">−</button><b id="fpRate" style="min-width:52px;text-align:center"></b><button class="btn sm" id="fpRateUp" style="min-width:36px" aria-label="Больше процент">+</button></span></div>
+        <div class="fp-step"><span class="small" style="font-weight:600">Рост цен в год</span><span class="qty"><button class="btn sm" id="fpInflDown" style="min-width:36px" aria-label="Меньше рост цен">−</button><b id="fpInfl" style="min-width:52px;text-align:center"></b><button class="btn sm" id="fpInflUp" style="min-width:36px" aria-label="Больше рост цен">+</button></span></div>
+      </div>
+    </div>
+    <div class="fp-side">
+      <div class="card empty" id="fpNoPrice"><span class="e">👆</span>Выбери мечту или впиши цену, и план посчитается сам.</div>
+      <div class="card empty hide" id="fpBuyNow"><span class="e">🎉</span><b style="color:var(--ink)">Денег уже хватает: можно покупать сегодня!</b></div>
+      <div class="stack hide" id="fpMain">
+        <div>
+          <h3>Выбери план</h3>
+          <div class="levels" id="fpPlans" style="margin-top:8px"></div>
+        </div>
+        <div class="card fp-result">
+          <div id="fpHero" aria-live="polite"></div>
+          <div id="fpKv" style="margin-top:10px"></div>
+          <div id="fpVerdict"></div>
+          <button class="btn primary" id="fpSave" style="width:100%;margin-top:12px"></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid g2 hide" id="fpMore" style="margin-top:14px;align-items:start">
+    <div class="stack" id="fpExtras"></div>
+    <div class="card"><h3>🗓️ График по месяцам</h3><div id="fpSchedule" style="margin-top:8px"></div></div>
+  </div>
+  <p class="small muted" style="margin-top:14px">Расчёт учебный и примерный: рост цен и ставка условные. Это не финансовый совет. Вклад несовершеннолетнему открывают вместе с родителями.</p>
 </section>
 
 <!-- ================= ПОМОЩНИК ================= -->
@@ -360,6 +456,7 @@ footer{border-top:1px solid var(--line);padding:20px 0 40px;font-size:14px;color
         <ul class="small" style="margin:0;padding-left:20px">
           <li>✅ Новая тема «Первая работа и налоги» — уже есть в демо</li>
           <li>✅ Раздел для родителей — первая версия здесь</li>
+          <li>✅ Финплан: сколько и когда откладывать на мечту — уже есть в демо</li>
           <li>⏳ Тестирование на школьниках — собираем отзывы формой справа</li>
           <li>⏳ Больше игр: кредиты, страховка, первая банковская карта</li>
         </ul>
@@ -410,7 +507,24 @@ var KEY = 'finwise-web-v1';
 var storageOK = (function(){ try{ var k='__fw_t'; localStorage.setItem(k,'1'); localStorage.removeItem(k); return true; }catch(e){ return false; } })();
 function defaultState(){
   return { level:'school', name:'', xp:0, coins:0, games:{}, daily:{date:'',plays:0,correct:0,perfect:0,searches:0,goals:0,market:0,chest:false},
-           streak:{last:'',count:0}, week:{key:'',xp:0}, goals:[], feedback:[], log:[], ach:{}, chests:0, marketBest:null };
+           streak:{last:'',count:0}, week:{key:'',xp:0}, goals:[], feedback:[], log:[], ach:{}, chests:0, marketBest:null, plan:planDefaults() };
+}
+function planDefaults(){
+  return { title:'', price:0, saved:0, income:0, spend:{}, months:12, scenario:1, place:'jar', inflation:10, rate:12, goalId:null };
+}
+// Сохранение могло быть испорчено или появиться до Финплана: чиним, не теряя остального.
+function cleanPlan(p){
+  var d=planDefaults(); if(!p||typeof p!=='object') return d;
+  function amount(v){ return (typeof v==='number'&&isFinite(v)&&v>=0)?Math.min(1000000000,Math.round(v)):0; }
+  function within(v,lo,hi,def){ return (typeof v==='number'&&isFinite(v))?Math.max(lo,Math.min(hi,Math.round(v))):def; }
+  d.title=typeof p.title==='string'?p.title.slice(0,40):'';
+  d.price=amount(p.price); d.saved=amount(p.saved); d.income=amount(p.income);
+  if(p.spend&&typeof p.spend==='object'){ Object.keys(p.spend).forEach(function(k){ d.spend[k]=amount(p.spend[k]); }); }
+  d.months=within(p.months,2,120,12); d.scenario=within(p.scenario,0,2,1);
+  d.place=p.place==='deposit'?'deposit':'jar';
+  d.inflation=within(p.inflation,0,50,10); d.rate=within(p.rate,1,50,12);
+  d.goalId=p.goalId==null?null:p.goalId;
+  return d;
 }
 function load(){
   var s = defaultState();
@@ -422,6 +536,7 @@ function load(){
   if(!Array.isArray(s.goals)) s.goals=[]; if(!Array.isArray(s.feedback)) s.feedback=[]; if(!Array.isArray(s.log)) s.log=[];
   if(!s.games||typeof s.games!=='object') s.games={};
   if(['school','teen','student'].indexOf(s.level)<0) s.level='school';
+  s.plan=cleanPlan(s.plan);
   return s;
 }
 function save(){ if(!storageOK) return; try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
@@ -595,7 +710,7 @@ var BUDGET = {
 };
 
 /* ---------------- Навигация ---------------- */
-var VIEWS=['home','games','quests','goals','helper','market','parents','about'];
+var VIEWS=['home','games','quests','goals','plan','helper','market','parents','about'];
 function go(view, push){
   if(VIEWS.indexOf(view)<0) view='home';
   VIEWS.forEach(function(v){ $(v).classList.toggle('hide', v!==view); });
@@ -616,6 +731,7 @@ function render(view){
   if(view==='games') renderGames();
   if(view==='quests') renderQuests();
   if(view==='goals') renderGoals();
+  if(view==='plan') renderPlan();
   if(view==='helper') renderHelper();
   if(view==='market') renderMarket();
   if(view==='parents') renderParents();
@@ -848,16 +964,19 @@ function renderGoals(){
   box.innerHTML='';
   S.goals.forEach(function(g){
     var pct=Math.min(100,Math.round(g.saved/g.target*100)), left=Math.max(0,g.target-g.saved), weeks=g.weekly>0?Math.ceil(left/g.weekly):null;
+    var st=g.plan?FP.planStatus(g.plan,g.target,g.saved,dayKey()):null;
     var d=document.createElement('div'); d.className='card'; d.style.marginTop='10px';
     d.innerHTML='<div class="row" style="justify-content:space-between"><h3 style="margin:0">'+esc(g.name)+'</h3><span class="tag '+(pct>=100?'green':'blue')+'">'+(pct>=100?'Готово! 🎉':pct+'%')+'</span></div>'+
       '<div class="progress" style="margin:10px 0"><i style="width:'+pct+'%"></i></div>'+
-      '<p class="small">Накоплено <b>'+fmt(g.saved)+'</b> из '+fmt(g.target)+'. '+(left>0?'Осталось '+fmt(left)+(weeks?' — примерно '+weeks+' '+plural(weeks,'неделя','недели','недель')+' при '+fmt(g.weekly)+' в неделю.':''):'Цель достигнута!')+'</p>'+
-      '<div class="row"><input type="number" min="1" inputmode="numeric" placeholder="Сумма, ₸" style="max-width:150px" aria-label="Сумма пополнения"><button class="btn sm primary" data-act="add">+ Пополнить</button><button class="btn sm" data-act="week">+ недельная сумма</button><button class="btn sm" data-act="sub">− Снять</button><button class="btn sm danger" data-act="del">Удалить</button></div><div class="err"></div>';
+      '<p class="small">Накоплено <b>'+fmt(g.saved)+'</b> из '+fmt(g.target)+'. '+(left>0?'Осталось '+fmt(left)+(st?'.':(weeks?' — примерно '+weeks+' '+plural(weeks,'неделя','недели','недель')+' при '+fmt(g.weekly)+' в неделю.':'')):'Цель достигнута!')+'</p>'+
+      (st&&left>0?'<p class="small">📅 План: <b>'+fmt(g.plan.monthly)+'</b> в месяц, покупка: '+fpMonth(st.deadline)+'<br><b class="'+(st.diff<0?'down':'up')+'">'+(st.diff<0?'⚠️ Отстаёшь от плана на '+fmt(-st.diff):st.dueNow>0?'✓ Идёшь по плану':'✓ На этот месяц всё отложено')+'</b></p>':'')+
+      '<div class="row">'+(st&&st.dueNow>0&&left>0?'<button class="btn sm primary" data-act="plan">+ По плану: '+fmt(st.dueNow)+'</button>':'')+'<input type="number" min="1" inputmode="numeric" placeholder="Сумма, ₸" style="max-width:150px" aria-label="Сумма пополнения"><button class="btn sm'+(st?'':' primary')+'" data-act="add">+ Пополнить</button>'+(st?'<button class="btn sm" data-act="editplan">📊 Изменить план</button>':'<button class="btn sm" data-act="week">+ недельная сумма</button>')+'<button class="btn sm" data-act="sub">− Снять</button><button class="btn sm danger" data-act="del">Удалить</button></div><div class="err"></div>';
     var inp=d.querySelector('input'), err=d.querySelector('.err');
     d.querySelectorAll('[data-act]').forEach(function(b){ b.onclick=function(){
       var act=b.dataset.act;
       if(act==='del'){ if(confirm('Удалить цель «'+g.name+'»?')){ S.goals=S.goals.filter(function(x){return x.id!==g.id;}); save(); renderGoals(); } return; }
-      var v= act==='week' ? g.weekly : num(inp.value);
+      if(act==='editplan'){ fpOpenGoal(g); return; }
+      var v= act==='week' ? g.weekly : act==='plan' ? st.dueNow : num(inp.value);
       if(!isFinite(v)||v<=0){ err.textContent='Впиши сумму больше нуля.'; return; }
       v=Math.round(v);
       if(act==='sub'){ if(v>g.saved){ err.textContent='Нельзя снять больше, чем накоплено ('+fmt(g.saved)+').'; return; } g.saved-=v; }
@@ -894,6 +1013,288 @@ function calc(){
     '<div style="display:flex;gap:3px;align-items:flex-end;height:110px;margin-top:10px" aria-hidden="true">'+bars+'</div><p class="small muted" style="margin-top:6px"><span style="color:var(--brand)">■</span> проценты · <span style="color:var(--info)">■</span> твои взносы. Условный расчёт: ставка в банках меняется, налоги и комиссии не учтены.</p>';
 }
 $('btnCalc').onclick=calc;
+
+/* ---------------- Финплан: расчёты ---------------- */
+// Логика таблицы «Финплан», только копят не на пенсию, а на покупку. Те же формулы,
+// что в мобильном приложении (native-ts/lib/goalPlan.ts):
+//   цена к покупке = цена × (1 + рост цен)^срок
+//   взнос с процентами = ПЛТ(ставка; срок; −накоплено; цена к покупке; 1), взнос в начале месяца
+// Проценты целые: 10 значит 10% в год.
+var FP=(function(){
+  var MAX_REACH=600, EPS=1e-6;
+  function up(x){ return Math.max(0,Math.ceil(x-EPS)); }
+  function monthlyRate(p){ return Math.pow(1+p/100,1/12)-1; }
+  function priceAfter(price,infl,months){ return price*Math.pow(1+infl/100,months/12); }
+  function annuityDue(r,n){ return r===0?n:((Math.pow(1+r,n)-1)/r)*(1+r); }
+  function balanceAfter(saved,pay,r,n){ return saved*Math.pow(1+r,n)+pay*annuityDue(r,n); }
+  function paymentAtStart(target,saved,r,n){ return n<=0?0:(target-saved*Math.pow(1+r,n))/annuityDue(r,n); }
+  function addMonths(s,n){ var t=s.y*12+s.m+n; return {y:Math.floor(t/12),m:t%12}; }
+  function yearMonthOf(day){ return {y:parseInt(day.slice(0,4),10),m:parseInt(day.slice(5,7),10)-1}; }
+  function buildSchedule(i,start){
+    var r=monthlyRate(i.rate), priceThen=up(priceAfter(i.price,i.inflation,i.months)), monthly=up(paymentAtStart(priceThen,i.saved,r,i.months));
+    if(monthly===0) return [];
+    var rows=[], balance=i.saved;
+    for(var k=1;k<=i.months;k++){
+      var last=k===i.months, deposit=last?Math.min(monthly,up(priceThen/(1+r)-balance)):monthly;
+      balance=(balance+deposit)*(1+r);
+      rows.push({ym:addMonths(start,k-1),deposit:deposit,balance:last?priceThen:Math.round(balance),priceNow:Math.round(priceAfter(i.price,i.inflation,k))});
+    }
+    return rows;
+  }
+  function buildPlan(i){
+    var r=monthlyRate(i.rate), priceThen=up(priceAfter(i.price,i.inflation,i.months)), monthly=up(paymentAtStart(priceThen,i.saved,r,i.months));
+    var deposits=buildSchedule(i,{y:2000,m:0}).reduce(function(s,row){ return s+row.deposit; },0);
+    return {months:i.months,canBuyNow:i.price>0&&i.saved>=i.price,priceThen:priceThen,priceGrowth:Math.max(0,priceThen-i.price),monthly:monthly,
+      weekly:up(monthly*12/52),daily:up(monthly*12/365),monthlyNoInterest:up((priceThen-i.saved)/i.months),deposits:deposits,interest:Math.max(0,priceThen-i.saved-deposits)};
+  }
+  function monthsToReach(i){
+    if(i.price<=0||i.saved>=i.price) return 0;
+    var r=monthlyRate(i.rate);
+    for(var n=1;n<=MAX_REACH;n++){ if(balanceAfter(i.saved,i.monthly,r,n)>=priceAfter(i.price,i.inflation,n)-EPS) return n; }
+    return null; // цена растёт быстрее накоплений
+  }
+  function scenarioTerms(months){ var m=Math.max(2,Math.round(months)); return [Math.max(1,Math.round(m/2)),m,Math.round(m*1.5)]; }
+  function budgetSplit(income,spend){
+    var spent=Object.keys(spend).reduce(function(s,k){ return s+(spend[k]||0); },0);
+    return {spent:spent,leftover:Math.max(0,income-spent),overspent:Math.max(0,spent-income)};
+  }
+  function suggestSpend(income,cats,roundTo){
+    roundTo=roundTo||500; var out={};
+    cats.forEach(function(c){ out[c.id]=Math.floor(income*c.share/100/roundTo)*roundTo; });
+    return out;
+  }
+  // «А что если»: урезать самую большую трату вдвое или подзаработать. Только то, что приближает покупку.
+  function whatIfs(i){
+    var now=i.income-budgetSplit(i.income,i.spend).spent;
+    function reach(monthly){ return monthsToReach({price:i.price,saved:i.saved,inflation:i.inflation,rate:i.rate,monthly:Math.max(0,monthly)}); }
+    var before=reach(now);
+    if(i.price<=0||before===0) return [];
+    function better(m){ return m!==null&&(before===null||m<before); }
+    var out=[], top=Object.keys(i.spend).map(function(k){ return [k,i.spend[k]]; }).sort(function(a,b){ return (b[1]||0)-(a[1]||0); })[0];
+    if(top&&top[1]>0){ var cut=Math.ceil(top[1]/2), m1=reach(now+cut); if(better(m1)) out.push({kind:'cut',catId:top[0],amount:cut,months:m1,before:before}); }
+    if(i.income>0){ var extra=Math.max(1000,Math.round(i.income*0.2/1000)*1000), m2=reach(now+extra); if(better(m2)) out.push({kind:'earn',amount:extra,months:m2,before:before}); }
+    return out;
+  }
+  // Текущий месяц ещё не просрочен: отставанием считаются только прошедшие месяцы плана.
+  function planStatus(plan,target,saved,today){
+    var a=yearMonthOf(plan.start), b=yearMonthOf(today), startDay=parseInt(plan.start.slice(8,10),10), nowDay=parseInt(today.slice(8,10),10);
+    var elapsed=Math.max(0,(b.y-a.y)*12+(b.m-a.m)-(nowDay<startDay?1:0));
+    function owed(p){ return Math.min(target,plan.startSaved+plan.monthly*Math.min(plan.months,p)); }
+    var expected=owed(elapsed);
+    return {expected:expected,diff:saved-expected,dueNow:Math.max(0,owed(elapsed+1)-saved),deadline:addMonths(a,plan.months)};
+  }
+  // План становится целью в копилке. Цель того же плана обновляется, другие цели не трогаем.
+  function applyToGoals(goals,d,title,plan,today,newId){
+    var fields={name:title,target:plan.priceThen,weekly:plan.weekly,saved:d.saved,
+      plan:{monthly:plan.monthly,months:plan.months,start:today,startSaved:d.saved,priceToday:d.price,place:d.place,rate:d.rate,inflation:d.inflation}};
+    var next=goals.slice();
+    for(var k=0;k<next.length;k++){
+      if(next[k].id===d.goalId&&next[k].name===title){ next[k]=Object.assign({},next[k],fields); return {goals:next,id:d.goalId,created:false}; }
+    }
+    next.unshift(Object.assign({id:newId},fields));
+    return {goals:next,id:newId,created:true};
+  }
+  return {addMonths:addMonths,yearMonthOf:yearMonthOf,buildSchedule:buildSchedule,buildPlan:buildPlan,monthsToReach:monthsToReach,scenarioTerms:scenarioTerms,
+    budgetSplit:budgetSplit,suggestSpend:suggestSpend,whatIfs:whatIfs,planStatus:planStatus,applyToGoals:applyToGoals};
+})();
+/* ---------------- Финплан: конец расчётов ---------------- */
+
+/* ---------------- Финплан: экран ---------------- */
+var FP_GOALS=[{e:'🛴',t:'Электросамокат',p:200000},{e:'📱',t:'iPhone',p:600000},{e:'🎧',t:'Наушники',p:60000},{e:'🎮',t:'Приставка',p:300000},{e:'🚲',t:'Велосипед',p:120000},{e:'💻',t:'Ноутбук',p:350000}];
+// share — доля дохода в подсказке: на мечту остаётся 30%, как у копилки в игре «Бюджет».
+var FP_CATS=[{id:'food',n:'🍕 Еда и перекусы',c:'var(--fp-food)',share:25},{id:'transport',n:'🚌 Транспорт',c:'var(--fp-transport)',share:10},{id:'subs',n:'📶 Подписки и связь',c:'var(--fp-subs)',share:5},{id:'fun',n:'🎉 Развлечения',c:'var(--fp-fun)',share:20},{id:'other',n:'🛍️ Одежда и другое',c:'var(--muted)',share:10}];
+var FP_PLANS=[{e:'🚀',n:'Быстрый'},{e:'⭐',n:'Основной'},{e:'🐢',n:'Спокойный'}];
+var FP_TERMS=[3,6,12,18,24];
+var FP_MONTHS=['январь','февраль','март','апрель','май','июнь','июль','август','сентябрь','октябрь','ноябрь','декабрь'];
+var FP_PREVIEW=6, fpShowAll=false;
+
+function fpInt(n){ return Math.round(n||0).toLocaleString('ru-RU'); }
+function fpParse(s){ return Math.min(1000000000,parseInt(String(s).replace(/\D/g,''),10)||0); }
+function fpMonth(ym){ return FP_MONTHS[ym.m]+' '+ym.y; }
+function fpTerm(n){
+  if(n<24) return n+' '+plural(n,'месяц','месяца','месяцев');
+  var y=Math.floor(n/12), m=n%12;
+  return y+' '+plural(y,'год','года','лет')+(m?' '+m+' '+plural(m,'месяц','месяца','месяцев'):'');
+}
+function fpLinkedGoal(){
+  var d=S.plan;
+  return S.goals.filter(function(g){ return g.id===d.goalId&&g.name===d.title; })[0]||null;
+}
+// Поле суммы показывает «200 000», а хранится число. Курсор остаётся у той же цифры.
+function fpBindMoney(el,onChange){
+  el.addEventListener('input',function(){
+    var before=el.value.slice(0,el.selectionStart).replace(/\D/g,'').length, v=fpParse(el.value);
+    el.value=v?fpInt(v):'';
+    var pos=0, seen=0;
+    while(pos<el.value.length&&seen<before){ if(/\d/.test(el.value.charAt(pos))) seen++; pos++; }
+    try{ el.setSelectionRange(pos,pos); }catch(e){}
+    onChange(v); fpUpdate();
+  });
+}
+function fpSetMoney(el,v){ if(el) el.value=v?fpInt(v):''; }
+
+// Разметка, которая не меняется: собираем один раз, дальше только обновляем значения.
+$('fpGoals').innerHTML=FP_GOALS.map(function(g,i){ return '<button class="chip" data-fpgoal="'+i+'" aria-pressed="false">'+g.e+' '+g.t+'</button>'; }).join('');
+$('fpTerms').innerHTML=FP_TERMS.map(function(m){ return '<button class="chip" data-fpterm="'+m+'" aria-pressed="false">'+m+' мес.</button>'; }).join('');
+$('fpPlans').innerHTML=FP_PLANS.map(function(p,i){ return '<button class="lvl" data-fpplan="'+i+'" aria-pressed="false"></button>'; }).join('');
+$('fpSpend').innerHTML=FP_CATS.map(function(c){
+  return '<div class="fp-row"><span class="fp-dot" style="background:'+c.c+'"></span><span class="grow">'+c.n+'</span><span class="qty fp-qty"><button class="btn sm" data-fpstep="-1" data-cat="'+c.id+'" aria-label="Меньше: '+c.n+'">−</button><input type="text" inputmode="numeric" placeholder="0" id="fpCat_'+c.id+'" aria-label="'+c.n+'"><button class="btn sm" data-fpstep="1" data-cat="'+c.id+'" aria-label="Больше: '+c.n+'">+</button></span></div>';
+}).join('');
+
+function fpFill(){
+  var d=S.plan;
+  $('fpTitle').value=d.title;
+  fpSetMoney($('fpPrice'),d.price); fpSetMoney($('fpSaved'),d.saved); fpSetMoney($('fpIncome'),d.income);
+  FP_CATS.forEach(function(c){ fpSetMoney($('fpCat_'+c.id),d.spend[c.id]||0); });
+}
+
+function fpUpdate(){
+  var d=S.plan, rate=d.place==='deposit'?d.rate:0, b=FP.budgetSplit(d.income,d.spend);
+  var chips=$('fpGoals').querySelectorAll('[data-fpgoal]');
+  FP_GOALS.forEach(function(g,i){ chips[i].setAttribute('aria-pressed',d.title===g.t?'true':'false'); });
+  $('fpTerms').querySelectorAll('[data-fpterm]').forEach(function(x){ x.setAttribute('aria-pressed',+x.dataset.fpterm===d.months?'true':'false'); });
+  $('fpMonths').textContent=fpTerm(d.months);
+  $('fpRate').textContent=d.rate+'%'; $('fpInfl').textContent=d.inflation+'%';
+  $('fpJar').setAttribute('aria-pressed',d.place==='jar'?'true':'false');
+  $('fpDeposit').setAttribute('aria-pressed',d.place==='deposit'?'true':'false');
+  $('fpRateRow').classList.toggle('hide',d.place!=='deposit');
+
+  // Полоса бюджета: доход делится на траты и мечту. Суммы и подписи стоят в строках ниже.
+  var parts=FP_CATS.map(function(c){ return {v:d.spend[c.id]||0,c:c.c}; }).concat([{v:b.leftover,c:'var(--fp-saving)'}]).filter(function(x){ return x.v>0; });
+  $('fpBar').innerHTML=parts.length?parts.map(function(x){ return '<i style="flex:'+x.v+' 1 0;background:'+x.c+'"></i>'; }).join(''):'<i class="fp-none"></i>';
+  $('fpLeft').textContent=fmt(b.leftover);
+  $('fpOver').classList.toggle('hide',b.overspent===0);
+  $('fpOver').textContent=b.overspent?'⚠️ Тратишь больше, чем получаешь: на '+fmt(b.overspent)+' в месяц':'';
+  $('fpSuggest').classList.toggle('hide',d.income<=0);
+
+  var hasPrice=d.price>0, terms=FP.scenarioTerms(d.months);
+  var plans=terms.map(function(m){ return FP.buildPlan({price:d.price,saved:d.saved,months:m,inflation:d.inflation,rate:rate}); });
+  var plan=plans[d.scenario], ready=hasPrice&&!plan.canBuyNow;
+  $('fpNoPrice').classList.toggle('hide',hasPrice);
+  $('fpBuyNow').classList.toggle('hide',!(hasPrice&&plan.canBuyNow));
+  $('fpMain').classList.toggle('hide',!ready);
+  $('fpMore').classList.toggle('hide',!ready);
+  save();
+  if(!ready) return;
+
+  // Три плана: как столбцы таблицы, только вместо возраста меняется срок.
+  FP_PLANS.forEach(function(p,i){
+    var el=$('fpPlans').querySelector('[data-fpplan="'+i+'"]'), fits=plans[i].monthly<=b.leftover;
+    el.setAttribute('aria-pressed',d.scenario===i?'true':'false');
+    el.innerHTML='<span class="e">'+p.e+'</span><b>'+p.n+'</b><span class="small muted">'+fpTerm(plans[i].months)+'</span><span class="fp-sum">'+fmt(plans[i].monthly)+'</span><span class="small muted">в месяц</span>'+
+      (d.income>0?'<span class="fp-fit '+(fits?'up':'down')+'">'+(fits?'✓ хватает':'✕ не хватает')+'</span>':'');
+  });
+
+  var start=FP.yearMonthOf(dayKey()), purchase=FP.addMonths(start,plan.months), input={price:d.price,saved:d.saved,months:plan.months,inflation:d.inflation};
+  var gap=b.leftover-plan.monthly, reach=FP.monthsToReach({price:d.price,saved:d.saved,monthly:b.leftover,inflation:d.inflation,rate:rate});
+  $('fpHero').innerHTML=plan.monthly>0
+    ?'<b>Откладывай в месяц</b><div class="fp-hero">'+fmt(plan.monthly)+'</div><span class="small muted">это '+fmt(plan.weekly)+' в неделю или '+fmt(plan.daily)+' в день</span>'
+    :'<b>Откладывать больше не нужно</b><p class="small muted" style="margin:4px 0 0">Проценты сами дорастят накопленное до цены.</p>';
+  function kv(a,v){ return '<div class="kv"><span class="muted">'+a+'</span><b>'+v+'</b></div>'; }
+  $('fpKv').innerHTML=kv('Дата покупки',fpMonth(purchase))+kv('Цена сегодня',fmt(d.price))+kv('Цена к покупке',fmt(plan.priceThen))+
+    (d.saved>0?kv('Уже накоплено',fmt(d.saved)):'')+kv('Отложишь всего',fmt(plan.deposits))+(plan.interest>0?kv('Добавят проценты','+'+fmt(plan.interest)):'');
+
+  var v='';
+  if(plan.priceGrowth>0) v+='<p class="small" style="margin:10px 0 0">📈 Пока копишь, цена вырастет на '+fmt(plan.priceGrowth)+'.</p>';
+  if(d.income===0) v+='<div class="note info" style="margin-top:10px">💰 Впиши, сколько получаешь в месяц: сравним с планом.</div>';
+  else if(plan.monthly>0) v+=gap>=0
+    ?'<div class="note good" style="margin-top:10px">✅ Хватает! В запасе ещё '+fmt(gap)+' в месяц.</div>'
+    :'<div class="note bad" style="margin-top:10px">⚠️ Не хватает '+fmt(-gap)+' в месяц. Урежь траты, подзаработай или выбери план подольше.</div>';
+  if(d.income>0) v+='<p class="small" style="margin:10px 0 0">'+(b.leftover===0
+    ?'🧾 Сейчас на мечту ничего не остаётся: пересмотри траты или доход.'
+    :reach===null
+      ?'🏃 Если откладывать всё, что остаётся ('+fmt(b.leftover)+' в месяц), не догнать: цена растёт быстрее, чем копятся деньги.'
+      :'🧮 Если откладывать всё, что остаётся ('+fmt(b.leftover)+' в месяц), купишь через '+fpTerm(reach)+': '+fpMonth(FP.addMonths(start,reach))+'.')+'</p>';
+  $('fpVerdict').innerHTML=v;
+  $('fpSave').textContent=fpLinkedGoal()?'Обновить цель в копилке':'Добавить цель в копилку';
+
+  // Копилка против вклада: как строки «откладывать» и «инвестировать» в таблице.
+  var jar=FP.buildPlan(Object.assign({},input,{rate:0})).monthly, dep=FP.buildPlan(Object.assign({},input,{rate:d.rate})).monthly, extras='';
+  if(dep<jar) extras+='<div class="card"><h3>🐷 Копилка или вклад</h3><div class="kv"><span class="muted">В копилке дома</span><b>'+fmt(jar)+' в месяц</b></div><div class="kv"><span class="muted">На вкладе под '+d.rate+'%</span><b>'+fmt(dep)+' в месяц</b></div><p class="small" style="margin:8px 0 0">Вклад экономит '+fmt(jar-dep)+' в месяц: часть работы делают проценты.</p></div>';
+  var ideas=FP.whatIfs({price:d.price,saved:d.saved,inflation:d.inflation,rate:rate,income:d.income,spend:d.spend});
+  if(ideas.length) extras+='<div class="card"><h3>💡 А что если</h3>'+ideas.map(function(w){
+    var change='купишь через '+fpTerm(w.months)+(w.before===null?'':' вместо '+fpTerm(w.before));
+    var cat=w.kind==='cut'?FP_CATS.filter(function(c){ return c.id===w.catId; })[0]:null;
+    return '<p class="small" style="margin:8px 0 0">'+(cat
+      ?'✂️ Урежь вдвое «'+cat.n.replace(/^\S+\s/,'')+'» (−'+fmt(w.amount)+'): '+change+'.'
+      :'💪 Подзаработай ещё '+fmt(w.amount)+' в месяц: '+change+'.')+'</p>';
+  }).join('')+'</div>';
+  $('fpExtras').innerHTML=extras;
+  $('fpExtras').classList.toggle('hide',!extras);
+
+  var rows=FP.buildSchedule(Object.assign({},input,{rate:rate}),start);
+  var box=$('fpSchedule'), shown=fpShowAll?rows:rows.slice(0,FP_PREVIEW);
+  box.innerHTML=rows.length
+    ?'<div class="tbl-scroll"><table><thead><tr><th>Месяц</th><th class="num">Отложить</th><th class="num">Накоплено</th></tr></thead><tbody>'+shown.map(function(r){
+        return '<tr><td>'+fpMonth(r.ym)+'<div class="progress" style="height:4px;margin-top:4px"><i style="width:'+Math.min(100,r.balance/plan.priceThen*100)+'%;transition:none"></i></div></td><td class="num">'+fmt(r.deposit)+'</td><td class="num"><b>'+fmt(r.balance)+'</b></td></tr>';
+      }).join('')+'</tbody></table></div>'+
+      (rows.length>FP_PREVIEW?'<button class="btn sm" id="fpToggle" style="margin-top:8px">'+(fpShowAll?'Свернуть':'Показать все месяцы ('+rows.length+')')+'</button>':'')+
+      '<p style="margin:10px 0 0"><b>🛍️ '+fpMonth(purchase)+': покупка за '+fmt(plan.priceThen)+'</b></p>'
+    :'<p class="small muted">Взносы не нужны: проценты сами дорастят накопленное до цены.</p>';
+}
+
+function renderPlan(){
+  // Накопленное считается в копилке: цель этого плана главнее цифры в поле.
+  var g=fpLinkedGoal(); if(g) S.plan.saved=g.saved;
+  fpFill(); fpUpdate();
+}
+// Открыть план уже добавленной цели со всеми её условиями.
+function fpOpenGoal(g){
+  var d=S.plan, p=g.plan;
+  d.goalId=g.id; d.title=g.name; d.price=p.priceToday; d.saved=g.saved;
+  d.months=Math.max(2,p.months); d.scenario=p.months<2?0:1;
+  d.place=p.place==='deposit'?'deposit':'jar';
+  if(p.rate) d.rate=p.rate;
+  if(p.inflation!=null) d.inflation=p.inflation;
+  save(); go('plan');
+}
+
+$('fpTitle').addEventListener('input',function(){ S.plan.title=this.value; fpUpdate(); });
+fpBindMoney($('fpPrice'),function(v){ S.plan.price=v; });
+fpBindMoney($('fpSaved'),function(v){ S.plan.saved=v; });
+fpBindMoney($('fpIncome'),function(v){ S.plan.income=v; });
+FP_CATS.forEach(function(c){ fpBindMoney($('fpCat_'+c.id),function(v){ S.plan.spend[c.id]=v; }); });
+$('fpGoals').addEventListener('click',function(e){
+  var t=e.target.closest('[data-fpgoal]'); if(!t) return;
+  var g=FP_GOALS[+t.dataset.fpgoal], d=S.plan, linked=fpLinkedGoal();
+  // Накопленное принадлежит прежней цели: на новую мечту оно само не переходит.
+  if(linked&&linked.name!==g.t) d.saved=0;
+  d.title=g.t; d.price=g.p;
+  var again=fpLinkedGoal(); if(again) d.saved=again.saved;
+  fpFill(); fpUpdate();
+});
+$('fpTerms').addEventListener('click',function(e){ var t=e.target.closest('[data-fpterm]'); if(!t) return; S.plan.months=+t.dataset.fpterm; fpUpdate(); });
+$('fpPlans').addEventListener('click',function(e){ var t=e.target.closest('[data-fpplan]'); if(!t) return; S.plan.scenario=+t.dataset.fpplan; fpUpdate(); });
+$('fpSpend').addEventListener('click',function(e){
+  var t=e.target.closest('[data-fpstep]'); if(!t) return;
+  var d=S.plan, id=t.dataset.cat, step=d.income&&d.income<=20000?500:1000;
+  d.spend[id]=Math.max(0,Math.min(1000000000,(d.spend[id]||0)+(+t.dataset.fpstep)*step));
+  fpSetMoney($('fpCat_'+id),d.spend[id]); fpUpdate();
+});
+$('fpSuggest').onclick=function(){ S.plan.spend=FP.suggestSpend(S.plan.income,FP_CATS); fpFill(); fpUpdate(); };
+$('fpMonthsDown').onclick=function(){ S.plan.months=Math.max(2,S.plan.months-1); fpUpdate(); };
+$('fpMonthsUp').onclick=function(){ S.plan.months=Math.min(120,S.plan.months+1); fpUpdate(); };
+$('fpJar').onclick=function(){ S.plan.place='jar'; fpUpdate(); };
+$('fpDeposit').onclick=function(){ S.plan.place='deposit'; fpUpdate(); };
+$('fpRateDown').onclick=function(){ S.plan.rate=Math.max(1,S.plan.rate-1); fpUpdate(); };
+$('fpRateUp').onclick=function(){ S.plan.rate=Math.min(50,S.plan.rate+1); fpUpdate(); };
+$('fpInflDown').onclick=function(){ S.plan.inflation=Math.max(0,S.plan.inflation-1); fpUpdate(); };
+$('fpInflUp').onclick=function(){ S.plan.inflation=Math.min(50,S.plan.inflation+1); fpUpdate(); };
+$('fpSchedule').addEventListener('click',function(e){
+  if(!e.target.closest('#fpToggle')) return;
+  fpShowAll=!fpShowAll; fpUpdate(); var b=$('fpToggle'); if(b) b.focus();
+});
+$('fpSave').onclick=function(){
+  var d=S.plan, title=d.title.trim().slice(0,40)||'Моя мечта', rate=d.place==='deposit'?d.rate:0;
+  d.title=title;
+  var plan=FP.buildPlan({price:d.price,saved:d.saved,months:FP.scenarioTerms(d.months)[d.scenario],inflation:d.inflation,rate:rate});
+  var res=FP.applyToGoals(S.goals,d,title,plan,dayKey(),Date.now());
+  S.goals=res.goals; d.goalId=res.id;
+  if(res.created){ ensureDay(); S.daily.goals++; addReward(5,5); addLog('📊 Финплан: новая цель «'+title+'»'); }
+  save(); checkAch(); renderHeader();
+  toast(res.created?'Цель добавлена в копилку':'План обновлён');
+  go('goals');
+};
 
 /* ---------------- Помощник (не ИИ) ---------------- */
 var FAQ=[
